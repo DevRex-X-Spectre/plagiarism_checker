@@ -1,0 +1,28 @@
+{
+  "name": "project-archive-server",
+  "version": "1.0.0",
+  "description": "Backend API server for Project Archive",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "migrate": "node src/db/migrate.js"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.0.0",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mammoth": "^1.7.2",
+    "multer": "^1.4.5-lts.1",
+    "pdf-parse": "^1.1.1",
+    "pg": "^8.12.0",
+    "resend": "^3.5.0",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
+  }
+}

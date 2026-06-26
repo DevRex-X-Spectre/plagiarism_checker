@@ -1,0 +1,24 @@
+import { Router } from 'express';
+import { z } from 'zod';
+import { validate } from '../middleware/validate.middleware.js';
+import { requireAuth } from '../middleware/auth.middleware.js';
+import {
+  runSimilarityCheck,
+  getHistory,
+  getCheck,
+} from '../controllers/similarity.controller.js';
+import { SIMILARITY } from '../config/constants.js';
+
+const router = Router();
+
+const checkSchema = z.object({
+  title: z.string().min(5).max(300),
+  abstract: z.string().max(3000).optional(),
+  threshold: z.number().min(SIMILARITY.MIN_THRESHOLD).max(SIMILARITY.MAX_THRESHOLD).optional(),
+});
+
+router.post('/check', requireAuth, validate(checkSchema), runSimilarityCheck);
+router.get('/history', requireAuth, getHistory);
+router.get('/:id', requireAuth, getCheck);
+
+export default router;
