@@ -12,7 +12,7 @@ export async function requireAuth(req, res, next) {
     const decoded = verifyToken(token);
 
     const result = await pool.query(
-      'SELECT id, email, full_name, role, is_active, email_verified FROM users WHERE id = $1',
+      'SELECT id, email, full_name, role, is_active FROM users WHERE id = $1',
       [decoded.userId]
     );
 
@@ -42,7 +42,7 @@ export function optionalAuth(req, res, next) {
 
   try {
     const decoded = verifyToken(token);
-    req.user = decoded;
+    req.user = { ...decoded, id: decoded.userId };
   } catch {
     // Ignore invalid tokens for optional auth
   }

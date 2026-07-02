@@ -3,6 +3,7 @@ import { listProjects, softDeleteProject, getAllProjectCount, getProjectStats } 
 import { listAllDepartments, createDepartment, updateDepartment } from '../models/department.model.js';
 import { listAllChecks, getCheckCount, getTopSearchedTopics } from '../models/similarityCheck.model.js';
 import pool from '../config/database.js';
+import { VALID_ROLES } from '../config/constants.js';
 
 export async function getAdminStats(req, res, next) {
   try {
@@ -56,6 +57,10 @@ export async function updateUserById(req, res, next) {
   try {
     const { id } = req.params;
     const { isActive, role } = req.body;
+
+    if (role && !VALID_ROLES.includes(role)) {
+      return res.status(400).json({ error: 'Invalid role' });
+    }
 
     const user = await updateUser(id, { isActive, role });
     if (!user) {

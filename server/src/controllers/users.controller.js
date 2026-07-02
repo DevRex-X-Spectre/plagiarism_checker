@@ -44,7 +44,7 @@ export async function updateMe(req, res, next) {
     params.push(userId);
     const result = await pool.query(
       `UPDATE users SET ${updates.join(', ')}, updated_at = NOW() WHERE id = $${idx}
-       RETURNING id, email, full_name, role, is_active, email_verified`,
+       RETURNING id, email, full_name, role, is_active`,
       params
     );
 

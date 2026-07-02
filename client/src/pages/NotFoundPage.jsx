@@ -1,41 +1,23 @@
 import { Link } from 'react-router-dom';
+import { ArrowLeft, Search, FileQuestion } from 'lucide-react';
 import Button from '../components/ui/Button.jsx';
 
 export default function NotFoundPage() {
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: 'calc(100vh - 200px)',
-      padding: 'var(--spacing-48) var(--spacing-24)',
-    }}>
-      <div style={{ textAlign: 'center', maxWidth: 480 }}>
-        <div style={{
-          fontFamily: 'var(--font-suisseintl)',
-          fontSize: 'var(--text-display)',
-          fontWeight: 'var(--font-weight-light)',
-          color: 'var(--color-mist)',
-          lineHeight: 1,
-          marginBottom: 'var(--spacing-24)',
-        }}>
-          404
+    <div className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-16">
+      <div className="max-w-md text-center animate-fade-up">
+        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-pale-cyan/30 text-forest-teal">
+          <FileQuestion className="h-10 w-10" />
         </div>
-        <h1 style={{
-          fontFamily: 'var(--font-suisseintl)',
-          fontSize: 'var(--text-heading)',
-          fontWeight: 'var(--font-weight-medium)',
-          color: 'var(--color-deep-ink)',
-          marginBottom: 'var(--spacing-12)',
-        }}>
-          Page not found
-        </h1>
-        <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-slate)', marginBottom: 'var(--spacing-32)' }}>
-          The page you're looking for doesn't exist or has been moved.
+        <h1 className="text-6xl font-light tracking-tight text-deep-ink">404</h1>
+        <h2 className="mt-3 text-2xl font-light tracking-tight text-deep-ink">Page not found</h2>
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-slate">
+          This page does not exist.
         </p>
-        <Link to="/">
-          <Button variant="primary">Back to home</Button>
-        </Link>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link to="/"><Button variant="primary" size="lg" icon={ArrowLeft}>Home</Button></Link>
+          <Link to="/browse"><Button variant="ghost" size="lg" icon={Search}>Browse</Button></Link>
+        </div>
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+import { Loader2 } from 'lucide-react';
+
 export default function Button({
   children,
   variant = 'primary',
@@ -5,85 +7,66 @@ export default function Button({
   disabled = false,
   loading = false,
   type = 'button',
+  fullWidth = false,
+  icon: Icon,
+  iconPosition = 'left',
   onClick,
-  style = {},
+  className = '',
   ...props
 }) {
-  const base = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 'var(--spacing-8)',
-    fontFamily: 'var(--font-suisseintl)',
-    fontWeight: 'var(--font-weight-medium)',
-    border: 'none',
-    cursor: disabled || loading ? 'not-allowed' : 'pointer',
-    transition: 'all 0.15s ease',
-    opacity: disabled || loading ? 0.6 : 1,
-    borderRadius: 'var(--radius-buttons)',
-  };
+  const base =
+    'inline-flex items-center justify-center gap-2 font-sans font-medium rounded-lg cursor-pointer select-none transition-all duration-150 disabled:opacity-45 disabled:cursor-not-allowed active:scale-[0.97] relative overflow-hidden';
 
   const variants = {
-    primary: {
-      background: 'var(--color-deep-indigo)',
-      color: '#ffffff',
-      padding: '12px 20px',
-      fontSize: '14px',
-      boxShadow: 'var(--shadow-subtle)',
-    },
-    ghost: {
-      background: 'transparent',
-      color: 'var(--color-deep-ink)',
-      padding: '12px 16px',
-      fontSize: '14px',
-      border: '1px solid var(--color-mist)',
-    },
-    danger: {
-      background: '#dc2626',
-      color: '#ffffff',
-      padding: '10px 18px',
-      fontSize: '14px',
-    },
-    secondary: {
-      background: 'var(--color-paper-white)',
-      color: 'var(--color-carbon)',
-      padding: '10px 18px',
-      fontSize: '14px',
-      border: '1px solid var(--color-mist)',
-    },
+    primary:
+      'bg-deep-indigo text-white hover:bg-[#0d1540] hover:shadow-md hover:-translate-y-px',
+    ghost:
+      'bg-transparent text-carbon border border-mist hover:bg-paper-white hover:border-fog hover:text-deep-ink',
+    secondary:
+      'bg-paper-white text-carbon border border-mist hover:bg-card-white hover:shadow-xs',
+    danger:
+      'bg-danger text-white hover:bg-[#b91c1c] hover:shadow-sm',
+    text:
+      'bg-transparent text-deep-indigo p-0 text-sm font-medium hover:text-[#0d1540] hover:underline rounded-sm',
+    outline: 'bg-transparent text-deep-indigo border-2 border-deep-indigo hover:bg-deep-indigo hover:text-white',
+    success: 'bg-success text-white hover:bg-[#047857] hover:shadow-md',
   };
 
   const sizes = {
-    sm: { padding: '8px 14px', fontSize: '13px' },
-    md: {},
-    lg: { padding: '14px 24px', fontSize: '16px' },
+    sm: 'px-3 py-2 text-sm gap-1.5',
+    md: 'px-4 py-2.5 text-sm',
+    lg: 'px-6 py-3 text-base',
+    xl: 'px-8 py-4 text-base',
+    icon: 'p-2.5',
   };
+
+  const classes = [
+    base,
+    variants[variant] || variants.primary,
+    sizes[size] || sizes.md,
+    fullWidth && 'w-full',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <button
       type={type}
       disabled={disabled || loading}
       onClick={onClick}
-      style={{
-        ...base,
-        ...variants[variant],
-        ...sizes[size],
-        ...style,
-      }}
+      className={classes}
       {...props}
     >
       {loading ? (
-        <span style={{
-          width: 14,
-          height: 14,
-          border: '2px solid currentColor',
-          borderTopColor: 'transparent',
-          borderRadius: '50%',
-          animation: 'spin 0.7s linear infinite',
-          display: 'inline-block',
-        }} />
-      ) : children}
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <>
+          {Icon && iconPosition === 'left' && <Icon className="w-4 h-4" />}
+          {children}
+          {Icon && iconPosition === 'right' && <Icon className="w-4 h-4" />}
+        </>
+      )}
     </button>
   );
 }

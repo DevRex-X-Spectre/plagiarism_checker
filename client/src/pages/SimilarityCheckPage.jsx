@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { similarityService } from '../services/project.service.js';
+import { Search, Brain, AlertCircle, CheckCircle2, Building, User, Calendar, ArrowRight } from 'lucide-react';
 import Card from '../components/ui/Card.jsx';
-import Badge from '../components/ui/Badge.jsx';
 import Button from '../components/ui/Button.jsx';
 import Input from '../components/ui/Input.jsx';
+import EmptyState from '../components/ui/EmptyState.jsx';
 
 export default function SimilarityCheckPage() {
   const [form, setForm] = useState({ title: '', abstract: '', threshold: 0.5 });
@@ -15,18 +16,14 @@ export default function SimilarityCheckPage() {
   const handleCheck = async (e) => {
     e.preventDefault();
     if (!form.title || form.title.length < 5) {
-      setError('Please enter a topic title (at least 5 characters)');
+      setError('Enter at least 5 characters');
       return;
     }
     setError('');
     setLoading(true);
     setResults(null);
     try {
-      const res = await similarityService.check({
-        title: form.title,
-        abstract: form.abstract || undefined,
-        threshold: form.threshold,
-      });
+      const res = await similarityService.check({ title: form.title, abstract: form.abstract || undefined, threshold: form.threshold });
       setResults(res.data);
     } catch (err) {
       setError(err.message);
@@ -35,217 +32,82 @@ export default function SimilarityCheckPage() {
     }
   };
 
-  const scoreColor = (score) => {
-    if (score >= 0.8) return '#dc2626';
-    if (score >= 0.5) return '#d97706';
-    return 'var(--color-mint)';
-  };
-
-  const scoreLabel = (score) => {
-    if (score >= 0.8) return 'High';
-    if (score >= 0.5) return 'Moderate';
-    return 'Low';
-  };
+  const scoreColor = (score) => score >= 0.8 ? 'danger' : score >= 0.5 ? 'warning' : 'success';
+  const scoreLabel = (score) => score >= 0.8 ? 'High' : score >= 0.5 ? 'Moderate' : 'Low';
 
   return (
-    <div style={{ padding: 'var(--spacing-48) 0' }}>
-      <div className="container" style={{ maxWidth: 880 }}>
-        <Badge style={{ marginBottom: 'var(--spacing-16)' }}>Semantic Similarity Check</Badge>
-        <h1 style={{
-          fontFamily: 'var(--font-suisseintl)',
-          fontSize: 'var(--text-heading-lg)',
-          fontWeight: 'var(--font-weight-light)',
-          color: 'var(--color-deep-ink)',
-          marginBottom: 'var(--spacing-8)',
-        }}>
-          Check your topic
-        </h1>
-        <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-slate)', marginBottom: 'var(--spacing-40)' }}>
-          Enter your proposed project title and we'll find conceptually similar projects in the archive.
-        </p>
+    <div className="py-8 lg:py-12">
+      <div className="container max-w-3xl">
+        <div className="mb-8">
+          <Badge className="inline-flex items-center gap-1.5 mb-3"><Brain className="w-3.5 h-3.5" /> Semantic Check</Badge>
+          <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight mb-2">Check your topic</h1>
+          <p className="text-slate">Find conceptually similar projects in the archive.</p>
+        </div>
 
-        {/* Form */}
-        <Card style={{ marginBottom: 'var(--spacing-40)' }}>
-          <form onSubmit={handleCheck} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-20)' }}>
-            <Input
-              label="Project topic title"
-              value={form.title}
-              onChange={e => setForm({ ...form, title: e.target.value })}
-              placeholder="e.g. AI-Based Attendance Management System"
-              required
-            />
+        <Card padding={24} className="mb-8">
+          <form onSubmit={handleCheck} className="space-y-5">
+            <Input label="Topic title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="e.g. AI-Based Attendance System" required />
+
             <div>
-              <label style={{
-                display: 'block',
-                fontSize: 'var(--text-body-sm)',
-                fontWeight: 'var(--font-weight-medium)',
-                color: 'var(--color-carbon)',
-                marginBottom: 'var(--spacing-8)',
-              }}>
-                Abstract (optional — improves accuracy)
-              </label>
-              <textarea
-                value={form.abstract}
-                onChange={e => setForm({ ...form, abstract: e.target.value })}
-                placeholder="A brief description of what your project does..."
-                rows={3}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  fontSize: 'var(--text-body)',
-                  fontFamily: 'var(--font-suisseintl)',
-                  color: 'var(--color-deep-ink)',
-                  background: 'var(--surface-card)',
-                  border: '1px solid var(--color-mist)',
-                  borderRadius: 'var(--radius-inputs)',
-                  outline: 'none',
-                  resize: 'vertical',
-                }}
-              />
+              <label className="block text-sm font-medium text-carbon mb-2">Abstract (optional)</label>
+              <textarea value={form.abstract} onChange={e => setForm({ ...form, abstract: e.target.value })} rows={3} placeholder="Brief description..." className="w-full px-4 py-3 text-base bg-card-white border border-mist rounded-lg outline-none focus:border-deep-indigo resize-vertical" />
             </div>
 
             <div>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 'var(--spacing-8)',
-              }}>
-                <label style={{
-                  fontSize: 'var(--text-body-sm)',
-                  fontWeight: 'var(--font-weight-medium)',
-                  color: 'var(--color-carbon)',
-                }}>
-                  Similarity threshold
-                </label>
-                <span style={{
-                  fontFamily: 'var(--font-suisseintlmono)',
-                  fontSize: 'var(--text-body-sm)',
-                  color: 'var(--color-deep-ink)',
-                }}>
-                  {Math.round(form.threshold * 100)}%
-                </span>
+              <div className="flex justify-between mb-2">
+                <label className="text-sm font-medium text-carbon">Threshold</label>
+                <span className="font-mono text-sm font-semibold">{Math.round(form.threshold * 100)}%</span>
               </div>
-              <input
-                type="range"
-                min="0.3"
-                max="0.9"
-                step="0.05"
-                value={form.threshold}
-                onChange={e => setForm({ ...form, threshold: parseFloat(e.target.value) })}
-                style={{ width: '100%', accentColor: 'var(--color-deep-indigo)' }}
-              />
-              <p style={{ fontSize: 'var(--text-caption)', color: 'var(--color-slate)', marginTop: 'var(--spacing-4)' }}>
-                Only show projects above this similarity score.
-              </p>
+              <input type="range" min="0.3" max="0.9" step="0.05" value={form.threshold} onChange={e => setForm({ ...form, threshold: parseFloat(e.target.value) })} className="w-full accent-deep-indigo" />
             </div>
 
-            {error && (
-              <div style={{ padding: 'var(--spacing-12)', background: '#fee2e2', borderRadius: 'var(--radius-lg)', color: '#991b1b', fontSize: 'var(--text-body-sm)' }}>
-                {error}
-              </div>
-            )}
+            {error && <div className="flex items-center gap-2 p-3 bg-danger/5 border border-danger/20 rounded-lg text-danger text-sm"><AlertCircle className="w-4 h-4" />{error}</div>}
 
-            <Button type="submit" loading={loading} style={{ width: '100%' }}>
-              Run similarity check →
-            </Button>
+            <Button type="submit" loading={loading} size="lg" fullWidth icon={Search}>Run check</Button>
           </form>
         </Card>
 
-        {/* Results */}
-        {loading && (
-          <Card style={{ textAlign: 'center', padding: 'var(--spacing-48) 0' }}>
-            <p style={{ color: 'var(--color-slate)' }}>Analyzing similarity across all stored projects...</p>
-          </Card>
-        )}
-
         {results && !loading && (
-          <div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 'var(--spacing-20)',
-            }}>
-              <h2 style={{
-                fontFamily: 'var(--font-suisseintl)',
-                fontSize: 'var(--text-heading-sm)',
-                fontWeight: 'var(--font-weight-medium)',
-                color: 'var(--color-deep-ink)',
-              }}>
-                Results
-              </h2>
-              <span style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-slate)' }}>
-                {results.totalResults} {results.totalResults === 1 ? 'match' : 'matches'} above {Math.round(results.threshold * 100)}%
-              </span>
-            </div>
+          <div className="animate-fade-up">
+            <h2 className="text-xl font-medium text-deep-ink mb-4">{results.totalResults} {results.totalResults === 1 ? 'match' : 'matches'} above {Math.round(results.threshold * 100)}%</h2>
 
             {results.totalResults === 0 ? (
-              <Card style={{ textAlign: 'center', padding: 'var(--spacing-40) 0' }}>
-                <p style={{ fontSize: 'var(--text-body-lg)', color: 'var(--color-deep-ink)', marginBottom: 'var(--spacing-8)' }}>
-                  Clear to proceed
-                </p>
-                <p style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-slate)' }}>
-                  No projects found above {Math.round(results.threshold * 100)}% similarity.
-                </p>
+              <Card padding={32} className="text-center">
+                <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-4" />
+                <h3 className="text-xl font-medium text-deep-ink mb-2">Clear to proceed</h3>
+                <p className="text-slate">No similar topics found.</p>
               </Card>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-12)' }}>
-                {results.results.map((r, i) => (
-                  <Link key={r.projectId} to={`/projects/${r.projectId}`} style={{ textDecoration: 'none' }}>
-                    <Card style={{ cursor: 'pointer' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--spacing-16)' }}>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', gap: 'var(--spacing-8)', marginBottom: 'var(--spacing-8)' }}>
-                            <span style={{
-                              fontFamily: 'var(--font-suisseintlmono)',
-                              fontSize: 'var(--text-caption)',
-                              color: 'var(--color-fog)',
-                            }}>
-                              #{i + 1}
-                            </span>
-                            <Badge variant={r.level === 'high' ? 'danger' : r.level === 'moderate' ? 'warning' : 'success'}>
+              <div className="space-y-3">
+                {results.results.map((r, i) => {
+                  const pct = Math.round(r.score * 100);
+                  const color = scoreColor(r.score);
+                  const colors = { danger: 'text-danger bg-danger/5', warning: 'text-warning bg-warning/5', success: 'text-success bg-success/5' };
+                  return (
+                    <Link key={r.projectId} to={`/projects/${r.projectId}`} className="block animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>
+                      <Card padding={20} hover>
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium mb-2 ${colors[color]}`}>
                               {scoreLabel(r.score)}
-                            </Badge>
+                            </div>
+                            <h4 className="text-base font-medium text-deep-ink line-clamp-2">{r.title}</h4>
+                            <div className="flex items-center gap-3 mt-2 text-xs text-slate">
+                              <span>{r.departmentName}</span>
+                              <span>·</span>
+                              <span>{r.authorName}</span>
+                              <span>·</span>
+                              <span>{r.year}</span>
+                            </div>
                           </div>
-                          <h4 style={{
-                            fontFamily: 'var(--font-suisseintl)',
-                            fontSize: 'var(--text-body-lg)',
-                            fontWeight: 'var(--font-weight-medium)',
-                            color: 'var(--color-deep-ink)',
-                            marginBottom: 'var(--spacing-8)',
-                          }}>
-                            {r.title}
-                          </h4>
-                          <div style={{ display: 'flex', gap: 'var(--spacing-8)', flexWrap: 'wrap' }}>
-                            <Badge variant="muted">{r.departmentName}</Badge>
-                            <Badge variant="muted">{r.authorName}</Badge>
-                            <Badge variant="muted">{r.year}</Badge>
+                          <div className="text-right">
+                            <div className={`text-3xl font-light tabular-nums ${colors[color].split(' ')[0]}`}>{pct}%</div>
                           </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{
-                            fontFamily: 'var(--font-suisseintl)',
-                            fontSize: '32px',
-                            fontWeight: 'var(--font-weight-light)',
-                            color: scoreColor(r.score),
-                            lineHeight: 1,
-                          }}>
-                            {Math.round(r.score * 100)}%
-                          </div>
-                          <div style={{
-                            fontFamily: 'var(--font-suisseintlmono)',
-                            fontSize: 'var(--text-caption)',
-                            color: 'var(--color-slate)',
-                            marginTop: 'var(--spacing-4)',
-                          }}>
-                            SIMILARITY
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  </Link>
-                ))}
+                      </Card>
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -253,4 +115,8 @@ export default function SimilarityCheckPage() {
       </div>
     </div>
   );
+}
+
+function Badge({ children, className }) {
+  return <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 bg-pale-cyan/30 rounded-full text-xs font-mono text-forest-teal ${className}`}>{children}</span>;
 }

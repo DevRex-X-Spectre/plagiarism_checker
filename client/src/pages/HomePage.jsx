@@ -1,247 +1,57 @@
 import { Link } from 'react-router-dom';
+import { ArrowRight, BookOpen, Search, Upload } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import Button from '../components/ui/Button.jsx';
 import Card from '../components/ui/Card.jsx';
-import Badge from '../components/ui/Badge.jsx';
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <div>
-      {/* Hero */}
-      <section style={{
-        padding: 'var(--spacing-96) 0 var(--spacing-80)',
-      }}>
-        <div className="container" style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 'var(--spacing-64)',
-          alignItems: 'center',
-        }}>
-          <div>
-            <Badge style={{ marginBottom: 'var(--spacing-24)' }}>
-              Faculty Project Archive
-            </Badge>
-            <h1 style={{
-              fontFamily: 'var(--font-suisseintl)',
-              fontSize: 'var(--text-heading-lg)',
-              fontWeight: 'var(--font-weight-light)',
-              lineHeight: 'var(--leading-heading-lg)',
-              letterSpacing: 'var(--tracking-heading-lg)',
-              color: 'var(--color-deep-ink)',
-              marginBottom: 'var(--spacing-24)',
-            }}>
-              Know what's been<br />
-              <span style={{ color: 'var(--color-fog)' }}>researched before.</span>
+    <div className="py-8 sm:py-12 lg:py-16">
+      <div className="container max-w-6xl">
+        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div className="py-6">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-forest-teal">Project repository</p>
+            <h1 className="max-w-3xl text-4xl font-light leading-tight tracking-tight text-deep-ink sm:text-5xl lg:text-6xl">
+              Check project similarity before work starts.
             </h1>
-            <p style={{
-              fontSize: 'var(--text-body-lg)',
-              color: 'var(--color-slate)',
-              lineHeight: 'var(--leading-body-lg)',
-              marginBottom: 'var(--spacing-40)',
-              maxWidth: 480,
-            }}>
-              Upload student projects and check new topics for semantic overlap.
-              Built for Nigerian university faculties — detects conceptual duplication
-              that tools like Turnitin miss.
+            <p className="mt-5 max-w-xl text-base leading-7 text-slate sm:text-lg">
+              Search existing student projects, compare new ideas, and keep faculty submissions in one clean archive.
             </p>
-            <div style={{ display: 'flex', gap: 'var(--spacing-16)', flexWrap: 'wrap' }}>
-              {isAuthenticated ? (
-                <>
-                  <Link to="/similarity-check">
-                    <Button variant="primary" size="lg">Check a topic →</Button>
-                  </Link>
-                  <Link to="/upload">
-                    <Button variant="ghost" size="lg">Upload project</Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link to="/register">
-                    <Button variant="primary" size="lg">Get started →</Button>
-                  </Link>
-                  <Link to="/browse">
-                    <Button variant="ghost" size="lg">Browse archive</Button>
-                  </Link>
-                </>
-              )}
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link to="/similarity-check"><Button size="lg" icon={Search}>Check similarity</Button></Link>
+              <Link to="/browse"><Button variant="ghost" size="lg" icon={BookOpen}>Browse archive</Button></Link>
             </div>
           </div>
 
-          {/* Hero visual — Financial data card mockup */}
-          <div>
-            <Card shadow="xl" padding={32} style={{ maxWidth: 400, margin: '0 auto' }}>
-              <div style={{
-                fontFamily: 'var(--font-suisseintl)',
-                fontSize: '14px',
-                fontWeight: 'var(--font-weight-medium)',
-                color: 'var(--color-deep-ink)',
-                marginBottom: 'var(--spacing-8)',
-              }}>
-                Similarity Check
-              </div>
-              <div style={{
-                fontFamily: 'var(--font-suisseintl)',
-                fontSize: '28px',
-                fontWeight: 'var(--font-weight-light)',
-                color: 'var(--color-deep-ink)',
-                letterSpacing: '-0.56px',
-                marginBottom: 'var(--spacing-4)',
-              }}>
-                Topic Analysis
-              </div>
-              <div style={{
-                fontFamily: 'var(--font-suisseintlmono)',
-                fontSize: '11px',
-                color: 'var(--color-slate)',
-                marginBottom: 'var(--spacing-24)',
-              }}>
-                SEMANTIC SIMILARITY ENGINE
-              </div>
-              <div style={{
-                borderTop: '1px solid var(--color-mist)',
-                paddingTop: 'var(--spacing-16)',
-              }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-12)' }}>
-                  {[
-                    { title: 'AI-Based Attendance System using Face Recognition', score: 87 },
-                    { title: 'Automated Attendance Tracking with CNN', score: 71 },
-                    { title: 'Library Management System', score: 12 },
-                  ].map((item, i) => (
-                    <div key={i} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: 'var(--spacing-12)',
-                    }}>
-                      <span style={{
-                        fontSize: '12px',
-                        color: 'var(--color-carbon)',
-                        flex: 1,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        {item.title}
-                      </span>
-                      <span style={{
-                        fontSize: '12px',
-                        fontFamily: 'var(--font-suisseintlmono)',
-                        fontWeight: 'var(--font-weight-medium)',
-                        color: item.score >= 80 ? '#dc2626' : item.score >= 50 ? '#d97706' : 'var(--color-mint)',
-                        minWidth: 36,
-                        textAlign: 'right',
-                      }}>
-                        {item.score}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section style={{
-        padding: 'var(--spacing-80) 0',
-        background: 'var(--surface-card)',
-      }}>
-        <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-64)' }}>
-            <Badge style={{ marginBottom: 'var(--spacing-16)' }}>How it works</Badge>
-            <h2 style={{
-              fontFamily: 'var(--font-suisseintl)',
-              fontSize: 'var(--text-heading-lg)',
-              fontWeight: 'var(--font-weight-light)',
-              color: 'var(--color-deep-ink)',
-            }}>
-              Three steps to smarter research
-            </h2>
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 'var(--spacing-32)',
-          }}>
-            {[
-              {
-                step: '01',
-                title: 'Upload your project',
-                desc: 'Drop a DOCX or PDF. We extract the title, abstract, author, department, and year automatically. No form filling.',
-              },
-              {
-                step: '02',
-                title: 'Check your topic',
-                desc: 'Type your proposed project title. Sentence-BERT converts it to a meaning-based vector and compares it against every stored project.',
-              },
-              {
-                step: '03',
-                title: 'Get ranked results',
-                desc: 'Results appear ranked by cosine similarity score. Above 80%? Too close. Below 50%? Clear to proceed.',
-              },
-            ].map((f) => (
-              <div key={f.step}>
-                <div style={{
-                  fontFamily: 'var(--font-suisseintlmono)',
-                  fontSize: '40px',
-                  fontWeight: 'var(--font-weight-light)',
-                  color: 'var(--color-mist)',
-                  marginBottom: 'var(--spacing-16)',
-                }}>
-                  {f.step}
-                </div>
-                <h3 style={{
-                  fontFamily: 'var(--font-suisseintl)',
-                  fontSize: 'var(--text-heading-sm)',
-                  fontWeight: 'var(--font-weight-medium)',
-                  color: 'var(--color-deep-ink)',
-                  marginBottom: 'var(--spacing-12)',
-                }}>
-                  {f.title}
-                </h3>
-                <p style={{
-                  fontSize: 'var(--text-body)',
-                  color: 'var(--color-slate)',
-                  lineHeight: 'var(--leading-body)',
-                }}>
-                  {f.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section style={{ padding: 'var(--spacing-80) 0' }}>
-        <div className="container" style={{ textAlign: 'center' }}>
-          <h2 style={{
-            fontFamily: 'var(--font-suisseintl)',
-            fontSize: 'var(--text-heading-lg)',
-            fontWeight: 'var(--font-weight-light)',
-            color: 'var(--color-deep-ink)',
-            marginBottom: 'var(--spacing-24)',
-          }}>
-            Start building a smarter archive today
-          </h2>
-          <p style={{
-            fontSize: 'var(--text-body)',
-            color: 'var(--color-slate)',
-            marginBottom: 'var(--spacing-40)',
-          }}>
-            Free for faculties. No admin setup. Just register and start.
-          </p>
-          {!isAuthenticated && (
-            <Link to="/register">
-              <Button variant="primary" size="lg">Create your account →</Button>
-            </Link>
-          )}
-        </div>
-      </section>
+          <Card padding={0} className="overflow-hidden">
+            <div className="border-b border-mist bg-paper-white px-5 py-4">
+              <p className="text-sm font-medium text-deep-ink">Quick actions</p>
+            </div>
+            <div className="grid gap-1 p-3">
+              <Action to="/similarity-check" icon={Search} title="Check an idea" text="Compare topic and abstract." />
+              <Action to="/browse" icon={BookOpen} title="Find projects" text="Search by title, department, or year." />
+              <Action to={isAuthenticated ? '/upload' : '/login'} icon={Upload} title="Upload project" text="Students sign in to submit." />
+            </div>
+          </Card>
+        </section>
+      </div>
     </div>
+  );
+}
+
+function Action({ to, icon: Icon, title, text }) {
+  return (
+    <Link to={to} className="group flex items-center gap-4 rounded-lg px-4 py-4 transition-colors hover:bg-paper-white">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-pale-cyan/40 text-forest-teal">
+        <Icon className="h-5 w-5" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-semibold text-deep-ink">{title}</span>
+        <span className="block text-sm text-slate">{text}</span>
+      </span>
+      <ArrowRight className="h-4 w-4 text-fog transition-transform group-hover:translate-x-1 group-hover:text-deep-indigo" />
+    </Link>
   );
 }

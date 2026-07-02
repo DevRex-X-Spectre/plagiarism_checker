@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
+import { X } from 'lucide-react';
 
-export default function Modal({ isOpen, onClose, title, children, maxWidth = 560 }) {
+export default function Modal({ isOpen, onClose, title, children, maxWidth = 520 }) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -10,67 +11,43 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 560
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleEscape);
+      return () => window.removeEventListener('keydown', handleEscape);
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
     <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
       onClick={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(1, 24, 33, 0.4)',
-        backdropFilter: 'blur(4px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: 'var(--spacing-24)',
-      }}
+      style={{ background: 'rgba(1, 24, 33, 0.5)', backdropFilter: 'blur(8px)' }}
     >
       <div
+        className="relative w-full bg-card-white rounded-2xl shadow-xl animate-scale-in"
+        style={{ maxWidth, maxHeight: '90vh', overflow: 'auto' }}
         onClick={e => e.stopPropagation()}
-        style={{
-          background: 'var(--surface-card)',
-          borderRadius: 'var(--radius-cards)',
-          boxShadow: 'var(--shadow-xl)',
-          width: '100%',
-          maxWidth,
-          maxHeight: '90vh',
-          overflow: 'auto',
-        }}
       >
         {title && (
-          <div style={{
-            padding: 'var(--card-padding)',
-            borderBottom: '1px solid var(--color-mist)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-            <h2 style={{
-              fontSize: 'var(--text-heading-sm)',
-              fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--color-deep-ink)',
-            }}>
+          <div className="relative flex items-center justify-between p-6 border-b border-mist">
+            <h2 className="text-lg font-semibold text-deep-ink">
               {title}
             </h2>
             <button
               onClick={onClose}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: 'var(--color-slate)',
-                fontSize: 20,
-                lineHeight: 1,
-                padding: 4,
-              }}
+              className="p-2 rounded-lg text-slate hover:text-deep-ink hover:bg-mist/50 transition-colors"
             >
-              &times;
+              <X className="w-5 h-5" />
             </button>
           </div>
         )}
-        <div style={{ padding: 'var(--card-padding)' }}>
+        <div className="relative p-6">
           {children}
         </div>
       </div>

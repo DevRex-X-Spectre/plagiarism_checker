@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icons/*.png'],
       manifest: {
-        name: 'Project Archive',
-        short_name: 'ProjArchive',
-        description: 'Faculty Project Archive — Semantic Project Repository',
+        name: 'Project Repository',
+        short_name: 'ProjRepo',
+        description: 'Faculty Project Repository — Semantic Project Archive with Similarity Detection',
         theme_color: '#111a4a',
         background_color: '#f6f6f8',
         display: 'standalone',

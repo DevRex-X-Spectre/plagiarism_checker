@@ -10,13 +10,13 @@ export async function createSimilarityCheck({ userId, queryText, threshold, resu
   return result.rows[0];
 }
 
-export async function getCheckById(id, userId) {
+export async function getCheckById(id, userId, isAdmin = false) {
   const result = await pool.query(
     `SELECT sc.*, u.full_name as user_name, u.email as user_email
      FROM similarity_checks sc
      JOIN users u ON u.id = sc.user_id
-     WHERE sc.id = $1 AND (sc.user_id = $2 OR $2 = (SELECT id FROM users WHERE role = 'admin' LIMIT 1))`,
-    [id, userId]
+     WHERE sc.id = $1 AND (sc.user_id = $2 OR $3 = true)`,
+    [id, userId, isAdmin]
   );
   return result.rows[0] || null;
 }

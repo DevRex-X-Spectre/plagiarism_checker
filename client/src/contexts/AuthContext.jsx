@@ -38,7 +38,6 @@ export function AuthProvider({ children }) {
     register,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
-    isLecturer: user?.role === 'lecturer',
     isStudent: user?.role === 'student',
   };
 

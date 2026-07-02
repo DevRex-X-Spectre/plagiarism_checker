@@ -2,54 +2,40 @@ import { randomBytes } from 'crypto';
 import {
   createUser,
   findUserByEmail,
-  findUserByVerifyToken,
   findUserByResetToken,
-  verifyEmail,
   updatePassword,
   setResetToken,
   updateLastLogin,
 } from '../models/user.model.js';
 import { hashPassword, comparePassword } from '../utils/password.js';
 import { signToken } from '../utils/jwt.js';
-import { sendVerificationEmail, sendPasswordResetEmail } from '../services/email.service.js';
+import { sendPasswordResetEmail } from '../services/email.service.js';
 import { env } from '../config/env.js';
-import { ROLES, VALID_ROLES, MIN_PASSWORD_LENGTH, VERIFY_TOKEN_EXPIRY_HOURS, RESET_TOKEN_EXPIRY_HOURS } from '../config/constants.js';
+import { ROLES, MIN_PASSWORD_LENGTH, RESET_TOKEN_EXPIRY_HOURS } from '../config/constants.js';
 
 export async function register(req, res, next) {
   try {
-    const { email, password, fullName, role } = req.validated;
+    const { email, password, fullName } = req.validated;
 
     const existing = await findUserByEmail(email.toLowerCase());
     if (existing) {
       return res.status(409).json({ error: 'An account with this email already exists' });
     }
 
-    if (!VALID_ROLES.includes(role)) {
-      return res.status(400).json({ error: 'Invalid role' });
-    }
-
     const passwordHash = await hashPassword(password);
 
-    const verifyToken = randomBytes(32).toString('hex');
-    const verifyExpires = new Date(Date.now() + VERIFY_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
-
-    // Check if email is in admin list
     const isAdmin = env.adminEmails.includes(email.toLowerCase());
-    const assignedRole = isAdmin ? ROLES.ADMIN : role;
+    const assignedRole = isAdmin ? ROLES.ADMIN : ROLES.STUDENT;
 
     const user = await createUser({
       email: email.toLowerCase(),
       passwordHash,
       fullName,
       role: assignedRole,
-      verifyToken,
-      verifyExpires,
     });
 
-    await sendVerificationEmail(user.email, verifyToken);
-
     res.status(201).json({
-      message: 'Account created. Please check your email to verify your account.',
+      message: 'Account created. You can sign in now.',
       user: {
         id: user.id,
         email: user.email,
@@ -97,7 +83,6 @@ export async function login(req, res, next) {
         email: user.email,
         fullName: user.full_name,
         role: user.role,
-        emailVerified: user.email_verified,
       },
     });
   } catch (err) {
@@ -121,60 +106,8 @@ export async function getMe(req, res) {
       email: req.user.email,
       fullName: req.user.full_name,
       role: req.user.role,
-      emailVerified: req.user.email_verified,
     },
   });
-}
-
-export async function verifyEmailHandler(req, res, next) {
-  try {
-    const { token } = req.query;
-
-    if (!token) {
-      return res.status(400).json({ error: 'Verification token is required' });
-    }
-
-    const user = await findUserByVerifyToken(token);
-    if (!user) {
-      return res.status(400).json({ error: 'Invalid or expired verification token' });
-    }
-
-    await verifyEmail(user.id);
-
-    res.json({ message: 'Email verified successfully. You can now log in.' });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function resendVerification(req, res, next) {
-  try {
-    const { email } = req.validated;
-
-    const user = await findUserByEmail(email.toLowerCase());
-    if (!user) {
-      // Don't reveal whether email exists
-      return res.json({ message: 'If that email exists and is unverified, a verification email has been sent.' });
-    }
-
-    if (user.email_verified) {
-      return res.json({ message: 'This email is already verified.' });
-    }
-
-    const verifyToken = randomBytes(32).toString('hex');
-    const verifyExpires = new Date(Date.now() + VERIFY_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
-
-    await pool.query(
-      'UPDATE users SET verify_token = $2, verify_expires = $3 WHERE id = $1',
-      [user.id, verifyToken, verifyExpires]
-    );
-
-    await sendVerificationEmail(user.email, verifyToken);
-
-    res.json({ message: 'Verification email sent.' });
-  } catch (err) {
-    next(err);
-  }
 }
 
 export async function forgotPassword(req, res, next) {

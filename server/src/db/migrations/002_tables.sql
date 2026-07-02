@@ -4,11 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
   email           CITEXT UNIQUE NOT NULL,
   password_hash   TEXT NOT NULL,
   full_name       TEXT NOT NULL,
-  role            TEXT NOT NULL CHECK (role IN ('student', 'lecturer', 'admin')),
+  role            TEXT NOT NULL CHECK (role IN ('student', 'admin')),
   is_active       BOOLEAN NOT NULL DEFAULT true,
-  email_verified  BOOLEAN NOT NULL DEFAULT false,
-  verify_token    TEXT,
-  verify_expires  TIMESTAMPTZ,
   reset_token     TEXT,
   reset_expires   TIMESTAMPTZ,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -33,6 +30,10 @@ CREATE TABLE IF NOT EXISTS projects (
   year          INTEGER NOT NULL CHECK (year BETWEEN 2000 AND 2100),
   uploaded_by   UUID NOT NULL REFERENCES users(id),
   embedding     JSONB NOT NULL,
+  file_name     TEXT,
+  original_file_name TEXT,
+  mime_type     TEXT,
+  file_size     INTEGER,
   is_deleted    BOOLEAN NOT NULL DEFAULT false,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );

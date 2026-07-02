@@ -1,85 +1,76 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { adminService } from '../../services/admin.service.js';
+import { FileText, Trash2, ExternalLink } from 'lucide-react';
 import Card from '../../components/ui/Card.jsx';
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
+import SearchInput from '../../components/ui/SearchInput.jsx';
+import Pagination from '../../components/ui/Pagination.jsx';
+import { useDebounce } from '../../hooks/useDebounce.js';
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [pagination, setPagination] = useState({ total: 0, page: 1, totalPages: 0 });
+  const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const debouncedQuery = useDebounce(query, 350);
 
   const fetchProjects = (page = 1) => {
     setLoading(true);
-    adminService.projects({ page, limit: 20 })
-      .then(r => {
-        setProjects(r.data.projects);
-        setPagination({ total: r.data.total, page: r.data.page, totalPages: r.data.totalPages });
-      })
-      .finally(() => setLoading(false));
+    adminService.projects({ page, limit: 20, q: debouncedQuery || undefined }).then(r => {
+      setProjects(r.data.projects);
+      setPagination({ total: r.data.total, page: r.data.page, totalPages: r.data.totalPages });
+    }).finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchProjects(); }, []);
+  useEffect(() => { fetchProjects(1); }, [debouncedQuery]);
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this project?')) return;
-    try {
-      await adminService.deleteProject(id);
-      fetchProjects(pagination.page);
-    } catch (err) {
-      alert(err.message);
-    }
+    try { await adminService.deleteProject(id); fetchProjects(pagination.page); }
+    catch (err) { alert(err.message); }
   };
 
   return (
-    <div style={{ padding: 'var(--spacing-48) 0' }}>
-      <div className="container">
-        <h1 style={{ fontFamily: 'var(--font-suisseintl)', fontSize: 'var(--text-heading-lg)', fontWeight: 'var(--font-weight-light)', color: 'var(--color-deep-ink)', marginBottom: 'var(--spacing-8)' }}>
-          All projects
-        </h1>
-        <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-slate)', marginBottom: 'var(--spacing-32)' }}>
-          {pagination.total} total projects (including deleted)
-        </p>
+    <div className="py-8 lg:py-12">
+      <div className="container max-w-5xl">
+        <div className="mb-8">
+          <Badge className="inline-flex items-center gap-1.5 mb-3"><FileText className="w-3.5 h-3.5" /> Projects</Badge>
+          <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight">{pagination.total} projects</h1>
+        </div>
+
+        <div className="mb-6">
+          <SearchInput value={query} onChange={e => setQuery(e.target.value)} placeholder="Search projects..." />
+        </div>
 
         <Card padding={0}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--color-mist)' }}>
-                {['Title', 'Author', 'Department', 'Year', 'Status', ''].map(h => (
-                  <th key={h} style={{ padding: 'var(--spacing-12) var(--card-padding)', textAlign: 'left', fontFamily: 'var(--font-suisseintlmono)', fontSize: '11px', color: 'var(--color-slate)', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 'var(--font-weight-regular)' }}>{h}</th>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead><tr className="border-b border-mist bg-paper-white/50">
+                {['Title', 'Author', 'Department', 'Year', 'Status', ''].map(h => <th key={h} className="px-4 py-3 text-left text-xs font-mono text-slate uppercase">{h}</th>)}
+              </tr></thead>
+              <tbody>
+                {loading ? <tr><td colSpan={6} className="px-4 py-8 text-center text-slate">Loading...</td></tr> :
+                 projects.map(p => (
+                  <tr key={p.id} className="border-b border-mist last:border-0 hover:bg-paper-white/30">
+                    <td className="px-4 py-3 max-w-xs">
+                      <Link to={`/projects/${p.id}`} className="text-sm font-medium text-deep-ink hover:text-deep-indigo flex items-center gap-1">
+                        <span className="line-clamp-1">{p.title}</span><ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3"><span className="text-sm text-slate">{p.author_name}</span></td>
+                    <td className="px-4 py-3"><Badge variant="muted">{p.department_name}</Badge></td>
+                    <td className="px-4 py-3"><span className="text-sm text-slate">{p.year}</span></td>
+                    <td className="px-4 py-3"><span className={`text-xs ${p.is_deleted ? 'text-danger' : 'text-success'}`}>{p.is_deleted ? 'Deleted' : 'Active'}</span></td>
+                    <td className="px-4 py-3 text-right">{!p.is_deleted && <Button variant="ghost" size="sm" icon={Trash2} onClick={() => handleDelete(p.id)} className="text-danger">Delete</Button>}</td>
+                  </tr>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={6} style={{ padding: 'var(--spacing-24)', textAlign: 'center', color: 'var(--color-slate)' }}>Loading...</td></tr>
-              ) : projects.map(p => (
-                <tr key={p.id} style={{ borderBottom: '1px solid var(--color-mist)' }}>
-                  <td style={{ padding: 'var(--spacing-16) var(--card-padding)' }}>
-                    <Link to={`/projects/${p.id}`} style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-deep-ink)', fontWeight: 'var(--font-weight-medium)', textDecoration: 'none' }}>
-                      {p.title}
-                    </Link>
-                  </td>
-                  <td style={{ padding: 'var(--spacing-16) var(--card-padding)', fontSize: 'var(--text-body-sm)', color: 'var(--color-carbon)' }}>{p.author_name}</td>
-                  <td style={{ padding: 'var(--spacing-16) var(--card-padding)' }}><Badge variant="muted">{p.department_name}</Badge></td>
-                  <td style={{ padding: 'var(--spacing-16) var(--card-padding)', fontSize: 'var(--text-body-sm)', color: 'var(--color-carbon)' }}>{p.year}</td>
-                  <td style={{ padding: 'var(--spacing-16) var(--card-padding)' }}>
-                    {p.is_deleted
-                      ? <Badge variant="danger">Deleted</Badge>
-                      : <Badge variant="success">Active</Badge>
-                    }
-                  </td>
-                  <td style={{ padding: 'var(--spacing-16) var(--card-padding)', textAlign: 'right' }}>
-                    {!p.is_deleted && (
-                      <Button size="sm" variant="secondary" onClick={() => handleDelete(p.id)}>Delete</Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </Card>
+        <Pagination page={pagination.page} totalPages={pagination.totalPages} total={pagination.total} onPageChange={fetchProjects} />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { validate } from '../middleware/validate.middleware.js';
-import { requireAuth } from '../middleware/auth.middleware.js';
+import { optionalAuth, requireAuth } from '../middleware/auth.middleware.js';
 import {
   runSimilarityCheck,
   getHistory,
@@ -17,7 +17,7 @@ const checkSchema = z.object({
   threshold: z.number().min(SIMILARITY.MIN_THRESHOLD).max(SIMILARITY.MAX_THRESHOLD).optional(),
 });
 
-router.post('/check', requireAuth, validate(checkSchema), runSimilarityCheck);
+router.post('/check', optionalAuth, validate(checkSchema), runSimilarityCheck);
 router.get('/history', requireAuth, getHistory);
 router.get('/:id', requireAuth, getCheck);
 

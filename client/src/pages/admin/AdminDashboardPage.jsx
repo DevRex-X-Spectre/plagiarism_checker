@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { adminService } from '../../services/admin.service.js';
+import { Users, FileText, Activity, Building2, ArrowRight, Shield } from 'lucide-react';
 import Card from '../../components/ui/Card.jsx';
 import Badge from '../../components/ui/Badge.jsx';
 
@@ -9,178 +10,71 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    adminService.stats()
-      .then(r => setStats(r.data.stats))
-      .finally(() => setLoading(false));
+    adminService.stats().then(r => setStats(r.data.stats)).finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return <div style={{ padding: 'var(--spacing-48) 0', textAlign: 'center' }}>Loading...</div>;
-  }
-
+  if (loading) return <div className="py-32 text-center"><div className="w-8 h-8 border-2 border-mist border-t-deep-indigo rounded-full animate-spin mx-auto" /></div>;
   if (!stats) return null;
 
-  const navCards = [
-    { label: 'Users', desc: `${stats.totalUsers} registered`, href: '/admin/users' },
-    { label: 'Projects', desc: `${stats.totalProjects} in archive`, href: '/admin/projects' },
-    { label: 'Similarity logs', desc: `${stats.totalSimilarityChecks} checks run`, href: '/admin/logs' },
-    { label: 'Departments', desc: 'Manage faculty departments', href: '/admin/departments' },
+  const navs = [
+    { label: 'Users', desc: `${stats.totalUsers}`, href: '/admin/users', icon: Users },
+    { label: 'Projects', desc: `${stats.totalProjects}`, href: '/admin/projects', icon: FileText },
+    { label: 'Logs', desc: `${stats.totalSimilarityChecks}`, href: '/admin/logs', icon: Activity },
+    { label: 'Departments', desc: `${stats.projectsByDepartment.length}`, href: '/admin/departments', icon: Building2 },
   ];
 
   return (
-    <div style={{ padding: 'var(--spacing-48) 0' }}>
-      <div className="container">
-        <div style={{ marginBottom: 'var(--spacing-40)' }}>
-          <Badge style={{ marginBottom: 'var(--spacing-16)' }}>Admin Console</Badge>
-          <h1 style={{
-            fontFamily: 'var(--font-suisseintl)',
-            fontSize: 'var(--text-heading-lg)',
-            fontWeight: 'var(--font-weight-light)',
-            color: 'var(--color-deep-ink)',
-          }}>
-            System overview
-          </h1>
+    <div className="py-8 lg:py-12">
+      <div className="container max-w-5xl">
+        <div className="mb-10">
+          <Badge className="inline-flex items-center gap-1.5 mb-3"><Shield className="w-3.5 h-3.5" /> Admin</Badge>
+          <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight">System overview</h1>
         </div>
 
-        {/* Stats grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 'var(--spacing-16)',
-          marginBottom: 'var(--spacing-48)',
-        }}>
-          {[
-            { label: 'Users', value: stats.totalUsers },
-            { label: 'Projects', value: stats.totalProjects },
-            { label: 'Checks', value: stats.totalSimilarityChecks },
-            { label: 'Departments', value: stats.projectsByDepartment.length },
-          ].map(s => (
-            <Card key={s.label} padding={20}>
-              <div style={{
-                fontFamily: 'var(--font-suisseintlmono)',
-                fontSize: '11px',
-                color: 'var(--color-slate)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                marginBottom: 'var(--spacing-8)',
-              }}>
-                {s.label}
-              </div>
-              <div style={{
-                fontFamily: 'var(--font-suisseintl)',
-                fontSize: '32px',
-                fontWeight: 'var(--font-weight-light)',
-                color: 'var(--color-deep-ink)',
-                lineHeight: 1,
-              }}>
-                {s.value}
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {/* Navigation cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 'var(--spacing-16)',
-          marginBottom: 'var(--spacing-48)',
-        }}>
-          {navCards.map(nav => (
-            <Link key={nav.label} to={nav.href} style={{ textDecoration: 'none' }}>
-              <Card style={{ height: '100%' }}>
-                <h3 style={{
-                  fontFamily: 'var(--font-suisseintl)',
-                  fontSize: 'var(--text-body-lg)',
-                  fontWeight: 'var(--font-weight-medium)',
-                  color: 'var(--color-deep-ink)',
-                  marginBottom: 'var(--spacing-4)',
-                }}>
-                  {nav.label}
-                </h3>
-                <p style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-slate)' }}>{nav.desc}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          {navs.map((n, i) => (
+            <Link key={n.label} to={n.href} className="animate-fade-up" style={{ animationDelay: `${i * 50}ms` }}>
+              <Card padding={20} hover className="text-center">
+                <n.icon className="w-6 h-6 text-deep-indigo mx-auto mb-2" />
+                <p className="text-2xl font-light text-deep-ink">{n.desc}</p>
+                <p className="text-sm text-slate">{n.label}</p>
               </Card>
             </Link>
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-40)' }}>
-          {/* Top searched topics */}
-          <div>
-            <h2 style={{
-              fontFamily: 'var(--font-suisseintl)',
-              fontSize: 'var(--text-heading-sm)',
-              fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--color-deep-ink)',
-              marginBottom: 'var(--spacing-20)',
-            }}>
-              Top searched topics
-            </h2>
+        <div className="grid lg:grid-cols-2 gap-6">
+          <Card padding={20}>
+            <h2 className="text-base font-medium text-deep-ink mb-4">Top searched topics</h2>
             {stats.topSearchedTopics.length === 0 ? (
-              <Card>No checks yet</Card>
+              <p className="text-sm text-slate">No data yet</p>
             ) : (
-              <Card padding={0}>
-                <div style={{ padding: 'var(--spacing-16) var(--card-padding)', borderBottom: '1px solid var(--color-mist)' }}>
-                  {stats.topSearchedTopics.map((t, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--spacing-8) 0' }}>
-                      <span style={{
-                        fontSize: 'var(--text-body-sm)',
-                        color: 'var(--color-carbon)',
-                        flex: 1,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        {t.query_text}
-                      </span>
-                      <span style={{
-                        fontFamily: 'var(--font-suisseintlmono)',
-                        fontSize: 'var(--text-body-sm)',
-                        color: 'var(--color-slate)',
-                      }}>
-                        {t.count}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              <div className="space-y-2">
+                {stats.topSearchedTopics.slice(0, 5).map((t, i) => (
+                  <div key={i} className="flex justify-between items-center py-2 border-b border-mist last:border-0">
+                    <span className="text-sm text-carbon truncate mr-4">{t.query_text}</span>
+                    <span className="text-xs font-mono text-slate flex-shrink-0">{t.count}x</span>
+                  </div>
+                ))}
+              </div>
             )}
-          </div>
+          </Card>
 
-          {/* Projects by department */}
-          <div>
-            <h2 style={{
-              fontFamily: 'var(--font-suisseintl)',
-              fontSize: 'var(--text-heading-sm)',
-              fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--color-deep-ink)',
-              marginBottom: 'var(--spacing-20)',
-            }}>
-              Projects by department
-            </h2>
+          <Card padding={20}>
+            <h2 className="text-base font-medium text-deep-ink mb-4">Projects by department</h2>
             {stats.projectsByDepartment.length === 0 ? (
-              <Card>No data</Card>
+              <p className="text-sm text-slate">No data yet</p>
             ) : (
-              <Card padding={0}>
-                <div style={{ padding: 'var(--spacing-16) var(--card-padding)' }}>
-                  {stats.projectsByDepartment.map((d, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--spacing-8) 0' }}>
-                      <span style={{ fontSize: 'var(--text-body-sm)', color: 'var(--color-carbon)' }}>
-                        {d.name}
-                      </span>
-                      <span style={{
-                        fontFamily: 'var(--font-suisseintlmono)',
-                        fontSize: 'var(--text-body-sm)',
-                        color: 'var(--color-slate)',
-                      }}>
-                        {d.count}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              <div className="space-y-2">
+                {stats.projectsByDepartment.map((d, i) => (
+                  <div key={i} className="flex justify-between items-center py-2 border-b border-mist last:border-0">
+                    <span className="text-sm text-carbon">{d.name}</span>
+                    <span className="text-xs font-mono text-slate">{d.count}</span>
+                  </div>
+                ))}
+              </div>
             )}
-          </div>
+          </Card>
         </div>
       </div>
     </div>

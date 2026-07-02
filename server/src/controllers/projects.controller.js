@@ -1,4 +1,3 @@
-import { unlink } from 'fs/promises';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -7,8 +6,6 @@ import { extractFields } from '../services/fieldExtractor.service.js';
 import { embedText } from '../services/embedding.service.js';
 import { createProject, listProjects, getProjectById, getProjectsByUser, softDeleteProject } from '../models/project.model.js';
 import { listActiveDepartments } from '../models/department.model.js';
-import { env } from '../config/env.js';
-import pool from '../config/database.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const UPLOAD_BASE = join(__dirname, '../../uploads');
@@ -22,9 +19,6 @@ export async function uploadProject(req, res, next) {
     const filePath = req.file.path;
     const text = await parseDocument(filePath, req.file.mimetype);
     const fields = extractFields(text);
-
-    // Clean up the temp file after extraction
-    await unlink(filePath).catch(() => {});
 
     // Get active departments for user to select from
     const departments = await listActiveDepartments();
@@ -41,6 +35,7 @@ export async function uploadProject(req, res, next) {
 
     res.json({
       tempFileId: req.file.filename, // Store filename for confirmation
+      originalFileName: req.file.originalname,
       fields,
       departments,
       suggestedDepartmentId,
@@ -52,10 +47,8 @@ export async function uploadProject(req, res, next) {
 
 export async function confirmUpload(req, res, next) {
   try {
-    const { tempFileId, title, abstract, authorName, departmentId, year } = req.validated;
+    const { tempFileId, title, abstract, authorName, departmentId, year, originalFileName, mimeType, fileSize } = req.validated;
     const userId = req.user.id;
-
-    const filePath = join(UPLOAD_BASE, tempFileId);
 
     // Generate embedding from title + abstract
     const embeddingText = `${title.trim()} ${abstract.trim()}`;
@@ -66,12 +59,14 @@ export async function confirmUpload(req, res, next) {
       abstract: abstract.trim(),
       authorName: authorName.trim(),
       departmentId,
+      year,
       uploadedBy: userId,
       embedding,
+      fileName: tempFileId,
+      originalFileName: originalFileName || tempFileId,
+      mimeType,
+      fileSize,
     });
-
-    // Delete the temp file
-    await unlink(filePath).catch(() => {});
 
     res.status(201).json({
       message: 'Project uploaded successfully',
@@ -84,6 +79,20 @@ export async function confirmUpload(req, res, next) {
         createdAt: project.created_at,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function downloadProjectFile(req, res, next) {
+  try {
+    const project = await getProjectById(req.params.id);
+    if (!project || project.is_deleted || !project.file_name) {
+      return res.status(404).json({ error: 'Project file not found' });
+    }
+
+    const filePath = join(UPLOAD_BASE, project.file_name);
+    res.download(filePath, project.original_file_name || project.file_name);
   } catch (err) {
     next(err);
   }

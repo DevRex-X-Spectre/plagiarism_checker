@@ -1,11 +1,15 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const required = [
-  'DATABASE_URL',
-  'JWT_SECRET',
-  'NODE_ENV',
-];
+// Local mode uses a JSON file instead of PostgreSQL.
+// Set USE_LOCAL_DB=true in server/.env to enable.
+export const useLocalDb = process.env.USE_LOCAL_DB === 'true';
+
+const required = ['JWT_SECRET'];
+
+if (!useLocalDb) {
+  required.push('DATABASE_URL');
+}
 
 const missing = required.filter(key => !process.env[key]);
 if (missing.length > 0) {
@@ -27,4 +31,5 @@ export const env = {
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   uploadDir: process.env.UPLOAD_DIR || 'uploads',
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '20971520', 10), // 20MB
+  useLocalDb,
 };

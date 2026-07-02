@@ -1,11 +1,11 @@
 import pool from '../config/database.js';
 
-export async function createUser({ email, passwordHash, fullName, role, verifyToken, verifyExpires }) {
+export async function createUser({ email, passwordHash, fullName, role }) {
   const result = await pool.query(
-    `INSERT INTO users (email, password_hash, full_name, role, verify_token, verify_expires)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING id, email, full_name, role, is_active, email_verified, created_at`,
-    [email, passwordHash, fullName, role, verifyToken, verifyExpires]
+    `INSERT INTO users (email, password_hash, full_name, role)
+     VALUES ($1, $2, $3, $4)
+     RETURNING id, email, full_name, role, is_active, created_at`,
+    [email, passwordHash, fullName, role]
   );
   return result.rows[0];
 }
@@ -20,16 +20,8 @@ export async function findUserByEmail(email) {
 
 export async function findUserById(id) {
   const result = await pool.query(
-    'SELECT id, email, full_name, role, is_active, email_verified, created_at, last_login_at FROM users WHERE id = $1',
+    'SELECT id, email, password_hash, full_name, role, is_active, created_at, last_login_at FROM users WHERE id = $1',
     [id]
-  );
-  return result.rows[0] || null;
-}
-
-export async function findUserByVerifyToken(token) {
-  const result = await pool.query(
-    'SELECT * FROM users WHERE verify_token = $1 AND verify_expires > NOW()',
-    [token]
   );
   return result.rows[0] || null;
 }
@@ -40,13 +32,6 @@ export async function findUserByResetToken(token) {
     [token]
   );
   return result.rows[0] || null;
-}
-
-export async function verifyEmail(userId) {
-  await pool.query(
-    'UPDATE users SET email_verified = true, verify_token = NULL, verify_expires = NULL WHERE id = $1',
-    [userId]
-  );
 }
 
 export async function updatePassword(userId, passwordHash) {
@@ -99,7 +84,7 @@ export async function listUsers({ page = 1, limit = 20, role, isActive, search }
   const total = parseInt(countResult.rows[0].count, 10);
 
   const result = await pool.query(
-    `SELECT id, email, full_name, role, is_active, email_verified, created_at, last_login_at
+    `SELECT id, email, full_name, role, is_active, created_at, last_login_at
      FROM users WHERE ${where}
      ORDER BY created_at DESC
      LIMIT $${paramIdx++} OFFSET $${paramIdx}`,
@@ -133,7 +118,7 @@ export async function updateUser(id, { isActive, role }) {
 
   params.push(id);
   const result = await pool.query(
-    `UPDATE users SET ${updates.join(', ')}, updated_at = NOW() WHERE id = $${idx} RETURNING id, email, full_name, role, is_active, email_verified, created_at`,
+    `UPDATE users SET ${updates.join(', ')}, updated_at = NOW() WHERE id = $${idx} RETURNING id, email, full_name, role, is_active, created_at`,
     params
   );
   return result.rows[0];

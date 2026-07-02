@@ -30,17 +30,6 @@ async function sendEmail({ to, subject, html }) {
   }
 }
 
-function verificationEmailHtml(verifyUrl) {
-  return `
-    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h2>Verify Your Email</h2>
-      <p>Click the link below to verify your email address:</p>
-      <p><a href="${verifyUrl}" style="background: #111a4a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">Verify Email</a></p>
-      <p style="color: #7c7f88; font-size: 14px;">This link expires in 24 hours. If you didn't create an account, ignore this email.</p>
-    </div>
-  `;
-}
-
 function passwordResetEmailHtml(resetUrl) {
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
@@ -50,15 +39,6 @@ function passwordResetEmailHtml(resetUrl) {
       <p style="color: #7c7f88; font-size: 14px;">This link expires in 1 hour. If you didn't request a reset, ignore this email.</p>
     </div>
   `;
-}
-
-export async function sendVerificationEmail(to, token) {
-  const verifyUrl = `${env.clientOrigin}/verify-email?token=${token}`;
-  return sendEmail({
-    to,
-    subject: 'Verify your Project Archive account',
-    html: verificationEmailHtml(verifyUrl),
-  });
 }
 
 export async function sendPasswordResetEmail(to, token) {

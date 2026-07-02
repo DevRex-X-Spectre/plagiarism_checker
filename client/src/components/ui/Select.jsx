@@ -1,60 +1,52 @@
 import { forwardRef } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 const Select = forwardRef(function Select({
   label,
   error,
+  icon: Icon,
   options = [],
   placeholder = 'Select...',
-  style = {},
+  className = '',
   ...props
 }, ref) {
-  const hasError = !!error;
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-8)' }}>
+    <div className={`flex flex-col gap-2 ${className}`}>
       {label && (
-        <label style={{
-          fontSize: 'var(--text-body-sm)',
-          fontWeight: 'var(--font-weight-medium)',
-          color: hasError ? '#dc2626' : 'var(--color-carbon)',
-        }}>
+        <label className={`text-sm font-medium leading-tight ${error ? 'text-danger' : 'text-carbon'}`}>
           {label}
         </label>
       )}
-      <select
-        ref={ref}
-        style={{
-          width: '100%',
-          padding: '12px 16px',
-          fontSize: 'var(--text-body)',
-          fontFamily: 'var(--font-suisseintl)',
-          color: 'var(--color-deep-ink)',
-          background: 'var(--surface-card)',
-          border: `1px solid ${hasError ? '#dc2626' : 'var(--color-mist)'}`,
-          borderRadius: 'var(--radius-inputs)',
-          outline: 'none',
-          cursor: 'pointer',
-          appearance: 'none',
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c7f88' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 12px center',
-          paddingRight: '40px',
-          ...style,
-        }}
-        {...props}
-      >
-        <option value="">{placeholder}</option>
-        {options.map(opt => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      {error && (
-        <span style={{ fontSize: 'var(--text-caption)', color: '#dc2626' }}>
-          {error}
-        </span>
-      )}
+      <div className="relative">
+        {Icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-fog pointer-events-none z-10">
+            <Icon className="w-4 h-4" />
+          </div>
+        )}
+        <select
+          ref={ref}
+          className={`
+            w-full px-4 py-[10px] pr-10 text-base font-sans text-deep-ink bg-card-white
+            border rounded-lg outline-none transition-all duration-150 cursor-pointer
+            appearance-none
+            ${Icon ? 'pl-10' : ''}
+            ${error
+              ? 'border-danger hover:border-danger focus:border-danger focus:shadow-[0_0_0_3px_rgba(220,38,38,0.12)]'
+              : 'border-mist hover:border-fog focus:border-deep-indigo focus:shadow-[0_0_0_3px_rgba(17,26,74,0.12)]'
+            }
+          `}
+          {...props}
+        >
+          <option value="">{placeholder}</option>
+          {options.map(opt => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-fog pointer-events-none" />
+      </div>
+      {error && <span className="text-xs text-danger leading-tight">{error}</span>}
     </div>
   );
 });

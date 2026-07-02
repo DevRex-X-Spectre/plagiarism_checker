@@ -15,4 +15,3 @@ export function requireRole(...allowedRoles) {
 }
 
 export const requireAdmin = requireRole(ROLES.ADMIN);
-export const requireLecturerOrAdmin = requireRole(ROLES.LECTURER, ROLES.ADMIN);

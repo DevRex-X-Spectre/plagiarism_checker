@@ -10,6 +10,7 @@ import {
   browseProjects,
   getProject,
   getMyProjects,
+  downloadProjectFile,
 } from '../controllers/projects.controller.js';
 import { softDeleteProject } from '../models/project.model.js';
 
@@ -22,16 +23,20 @@ const confirmSchema = z.object({
   authorName: z.string().min(2).max(100),
   departmentId: z.string().uuid(),
   year: z.number().int().min(2000).max(2100),
+  originalFileName: z.string().max(255).optional(),
+  mimeType: z.string().max(120).optional(),
+  fileSize: z.number().int().nonnegative().optional(),
 });
 
 router.get('/', browseProjects);
-router.get('/:id', getProject);
 router.get('/my/list', requireAuth, getMyProjects);
+router.get('/:id/download', downloadProjectFile);
+router.get('/:id', getProject);
 
 router.post('/upload', requireAuth, upload.single('file'), uploadProject);
 router.post('/confirm', requireAuth, validate(confirmSchema), confirmUpload);
 
-router.delete('/:id', requireAdmin, async (req, res, next) => {
+router.delete('/:id', requireAuth, requireAdmin, async (req, res, next) => {
   try {
     await softDeleteProject(req.params.id);
     res.json({ message: 'Project deleted' });

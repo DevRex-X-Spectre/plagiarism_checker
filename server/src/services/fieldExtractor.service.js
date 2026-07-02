@@ -16,8 +16,8 @@ const HEADING_PATTERNS = [
 ];
 
 const DEPT_PATTERNS = [
-  /(?:DEPARTMENT OF|DEPT\.?\s+OF)\s+([A-Za-z][A-Za-z &]+?)(?:\s*,|\s*$)/i,
-  /FACULTY\s+OF\s+([A-Za-z][A-Za-z &]+?)(?:\s*,|\s*$)/i,
+  /(?:DEPARTMENT OF|DEPT\.?\s+OF)\s+([A-Za-z][A-Za-z &]+?)(?:\s*,|\r?\n|$)/i,
+  /FACULTY\s+OF\s+([A-Za-z][A-Za-z &]+?)(?:\s*,|\r?\n|$)/i,
 ];
 
 export function extractFields(rawText) {

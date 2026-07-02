@@ -1,41 +1,24 @@
 import { Link } from 'react-router-dom';
+import { BookOpen } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer style={{
-      borderTop: '1px solid var(--color-mist)',
-      padding: 'var(--spacing-48) 0',
-      marginTop: 'var(--spacing-80)',
-    }}>
-      <div className="container" style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: 'var(--spacing-16)',
-      }}>
-        <div style={{
-          fontFamily: 'var(--font-suisseintl)',
-          fontSize: '14px',
-          fontWeight: 'var(--font-weight-medium)',
-          color: 'var(--color-deep-ink)',
-        }}>
-          Project Archive
-        </div>
-        <div style={{
-          display: 'flex',
-          gap: 'var(--spacing-24)',
-          fontSize: 'var(--text-body-sm)',
-          color: 'var(--color-slate)',
-        }}>
-          <Link to="/browse">Browse</Link>
-          <Link to="/register">Get Started</Link>
-        </div>
-        <div style={{
-          fontSize: 'var(--text-caption)',
-          color: 'var(--color-fog)',
-        }}>
-          &copy; {new Date().getFullYear()} Faculty Project Archive
+    <footer className="mt-24 border-t border-mist py-12">
+      <div className="container">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-deep-indigo flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-semibold text-deep-ink">Project Archive</span>
+          </Link>
+
+          <div className="flex items-center gap-6 text-sm text-slate">
+            <Link to="/browse" className="hover:text-deep-ink">Browse</Link>
+            <Link to="/register" className="hover:text-deep-ink">Get Started</Link>
+          </div>
+
+          <p className="text-xs text-fog">© {new Date().getFullYear()} Faculty Project Archive</p>
         </div>
       </div>
     </footer>

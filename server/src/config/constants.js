@@ -1,11 +1,9 @@
 export const ROLES = {
   STUDENT: 'student',
-  LECTURER: 'lecturer',
   ADMIN: 'admin',
 };
 
 export const JWT_EXPIRY = '7d';
-export const VERIFY_TOKEN_EXPIRY_HOURS = 24;
 export const RESET_TOKEN_EXPIRY_HOURS = 1;
 
 export const SIMILARITY = {

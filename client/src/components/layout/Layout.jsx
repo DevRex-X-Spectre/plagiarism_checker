@@ -3,15 +3,9 @@ import Footer from './Footer.jsx';
 
 export default function Layout({ children }) {
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100vh',
-    }}>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main style={{ flex: 1 }}>
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );

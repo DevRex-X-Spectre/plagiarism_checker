@@ -3,11 +3,14 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { projectService } from '../services/project.service.js';
 import { departmentService } from '../services/project.service.js';
 import { useDebounce } from '../hooks/useDebounce.js';
+import { Search, Library, FileText, Building, User, Calendar, ArrowRight, X } from 'lucide-react';
 import Card from '../components/ui/Card.jsx';
 import Badge from '../components/ui/Badge.jsx';
-import Input from '../components/ui/Input.jsx';
 import Select from '../components/ui/Select.jsx';
 import Button from '../components/ui/Button.jsx';
+import EmptyState from '../components/ui/EmptyState.jsx';
+import SearchInput from '../components/ui/SearchInput.jsx';
+import Pagination from '../components/ui/Pagination.jsx';
 
 export default function BrowsePage() {
   const [params, setParams] = useSearchParams();
@@ -42,155 +45,69 @@ export default function BrowsePage() {
     const next = new URLSearchParams(params);
     if (value) next.set(key, value);
     else next.delete(key);
-    next.delete('page');
+    if (key !== 'page') next.delete('page');
     setParams(next);
   };
 
   const years = Array.from({ length: new Date().getFullYear() - 1999 }, (_, i) => new Date().getFullYear() - i);
+  const hasFilters = q || department || year;
 
   return (
-    <div style={{ padding: 'var(--spacing-48) 0' }}>
-      <div className="container">
-        {/* Header */}
-        <div style={{ marginBottom: 'var(--spacing-40)' }}>
-          <h1 style={{
-            fontFamily: 'var(--font-suisseintl)',
-            fontSize: 'var(--text-heading-lg)',
-            fontWeight: 'var(--font-weight-light)',
-            color: 'var(--color-deep-ink)',
-            marginBottom: 'var(--spacing-8)',
-          }}>
-            Project Repository
-          </h1>
-          <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-slate)' }}>
-            {pagination.total.toLocaleString()} {pagination.total === 1 ? 'project' : 'projects'} in the archive
-          </p>
+    <div className="py-8 lg:py-12">
+      <div className="container max-w-5xl">
+        <div className="mb-8">
+          <Badge className="inline-flex items-center gap-1.5 mb-3"><Library className="w-3.5 h-3.5" /> Project Repository</Badge>
+          <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight mb-2">Browse archive</h1>
+          <p className="text-slate">{pagination.total.toLocaleString()} projects</p>
         </div>
 
-        {/* Filters */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr auto auto auto',
-          gap: 'var(--spacing-16)',
-          marginBottom: 'var(--spacing-40)',
-          alignItems: 'end',
-        }}>
-          <Input
-            placeholder="Search by title or abstract..."
-            value={q}
-            onChange={e => updateParam('q', e.target.value)}
-          />
-          <Select
-            value={department}
-            onChange={e => updateParam('department', e.target.value)}
-            options={departments.map(d => ({ value: d.id, label: d.name }))}
-            placeholder="All departments"
-            style={{ minWidth: 200 }}
-          />
-          <Select
-            value={year}
-            onChange={e => updateParam('year', e.target.value)}
-            options={years.map(y => ({ value: y, label: y }))}
-            placeholder="All years"
-            style={{ minWidth: 120 }}
-          />
-          {(q || department || year) && (
-            <Button variant="secondary" onClick={() => setParams({})}>
-              Clear
-            </Button>
-          )}
+        {/* Search & Filters */}
+        <div className="mb-8 space-y-4">
+          <SearchInput value={q} onChange={e => updateParam('q', e.target.value)} placeholder="Search by title..." size="lg" />
+          <div className="flex flex-wrap gap-3">
+            <Select value={department} onChange={e => updateParam('department', e.target.value)} options={departments.map(d => ({ value: d.id, label: d.name }))} placeholder="All departments" className="w-48" />
+            <Select value={year} onChange={e => updateParam('year', e.target.value)} options={years.map(y => ({ value: y, label: y.toString() }))} placeholder="All years" className="w-32" />
+            {hasFilters && <Button variant="ghost" onClick={() => setParams({})} icon={X}>Clear</Button>}
+          </div>
         </div>
 
-        {/* Project list */}
+        {/* Results */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 'var(--spacing-80) 0', color: 'var(--color-slate)' }}>
-            Loading...
+          <div className="space-y-4">
+            {[1,2,3].map(i => <Card key={i} padding={20}><div className="h-16 loading-skeleton rounded" /></Card>)}
           </div>
         ) : projects.length === 0 ? (
-          <Card style={{ textAlign: 'center', padding: 'var(--spacing-64) 0' }}>
-            <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-slate)', marginBottom: 'var(--spacing-16)' }}>
-              No projects found matching your filters.
-            </p>
-            <Button variant="ghost" onClick={() => setParams({})}>Clear filters</Button>
-          </Card>
+          <Card><EmptyState icon="search" title="No projects found" actionLabel="Clear filters" actionIcon={X} action={() => setParams({})} /></Card>
         ) : (
-          <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-16)' }}>
-              {projects.map(project => (
-                <Link key={project.id} to={`/projects/${project.id}`} style={{ textDecoration: 'none' }}>
-                  <Card style={{ cursor: 'pointer', transition: 'box-shadow 0.15s ease' }}
-                    onMouseEnter={e => e.currentTarget.style.boxShadow = 'var(--shadow-sm)'}
-                    onMouseLeave={e => e.currentTarget.style.boxShadow = 'var(--shadow-subtle)'}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--spacing-24)', flexWrap: 'wrap' }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <h3 style={{
-                          fontFamily: 'var(--font-suisseintl)',
-                          fontSize: 'var(--text-body-lg)',
-                          fontWeight: 'var(--font-weight-medium)',
-                          color: 'var(--color-deep-ink)',
-                          marginBottom: 'var(--spacing-8)',
-                          lineHeight: 'var(--leading-body-lg)',
-                        }}>
-                          {project.title}
-                        </h3>
-                        <p style={{
-                          fontSize: 'var(--text-body-sm)',
-                          color: 'var(--color-slate)',
-                          marginBottom: 'var(--spacing-12)',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                        }}>
-                          {project.abstract}
-                        </p>
-                        <div style={{ display: 'flex', gap: 'var(--spacing-12)', flexWrap: 'wrap' }}>
-                          <Badge>{project.department_name}</Badge>
-                          <Badge variant="muted">{project.author_name}</Badge>
-                          <Badge variant="muted">{project.year}</Badge>
+          <div className="space-y-4">
+            {projects.map((p, i) => (
+              <div key={p.id} className="animate-fade-up" style={{ animationDelay: `${i * 30}ms` }}>
+                <Link to={`/projects/${p.id}`} className="block group">
+                  <Card padding={20} hover>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <div className="w-10 h-10 rounded-lg bg-pale-cyan/30 flex items-center justify-center flex-shrink-0">
+                          <FileText className="w-5 h-5 text-forest-teal" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-base font-medium text-deep-ink group-hover:text-deep-indigo transition-colors line-clamp-2">{p.title}</h3>
+                          <p className="text-sm text-slate line-clamp-2 mt-1">{p.abstract}</p>
+                          <div className="flex items-center gap-3 mt-2 text-xs text-slate">
+                            <span className="flex items-center gap-1"><Building className="w-3 h-3" />{p.department_name}</span>
+                            <span className="flex items-center gap-1"><User className="w-3 h-3" />{p.author_name}</span>
+                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{p.year}</span>
+                          </div>
                         </div>
                       </div>
+                      <ArrowRight className="w-5 h-5 text-fog group-hover:text-deep-indigo group-hover:translate-x-1 transition-all flex-shrink-0 mt-2" />
                     </div>
                   </Card>
                 </Link>
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {pagination.totalPages > 1 && (
-              <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                gap: 'var(--spacing-8)',
-                marginTop: 'var(--spacing-40)',
-              }}>
-                {Array.from({ length: Math.min(pagination.totalPages, 7) }, (_, i) => {
-                  const p = i + 1;
-                  return (
-                    <button
-                      key={p}
-                      onClick={() => updateParam('page', p.toString())}
-                      style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 'var(--radius-lg)',
-                        border: `1px solid ${p === page ? 'var(--color-deep-indigo)' : 'var(--color-mist)'}`,
-                        background: p === page ? 'var(--color-deep-indigo)' : 'transparent',
-                        color: p === page ? '#fff' : 'var(--color-carbon)',
-                        fontFamily: 'var(--font-suisseintl)',
-                        fontSize: 'var(--text-body-sm)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {p}
-                    </button>
-                  );
-                })}
               </div>
-            )}
-          </>
+            ))}
+          </div>
         )}
+        <Pagination page={pagination.page} totalPages={pagination.totalPages} total={pagination.total} onPageChange={(nextPage) => updateParam('page', String(nextPage))} />
       </div>
     </div>
   );

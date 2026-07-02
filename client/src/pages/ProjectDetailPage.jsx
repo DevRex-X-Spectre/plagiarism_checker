@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { projectService } from '../services/project.service.js';
+import { ArrowLeft, Building, User, Calendar, Download } from 'lucide-react';
 import Card from '../components/ui/Card.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -18,69 +19,42 @@ export default function ProjectDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div style={{ textAlign: 'center', padding: 'var(--spacing-80) 0' }}>Loading...</div>;
-  if (error) return (
-    <div style={{ textAlign: 'center', padding: 'var(--spacing-80) 0' }}>
-      <p style={{ color: 'var(--color-slate)', marginBottom: 'var(--spacing-24)' }}>{error}</p>
-      <Link to="/browse"><Button variant="ghost">Back to browse</Button></Link>
-    </div>
-  );
+  if (loading) return <div className="py-32 text-center"><div className="w-8 h-8 border-2 border-mist border-t-deep-indigo rounded-full animate-spin mx-auto" /></div>;
+  if (error) return <div className="py-32 text-center"><p className="text-slate mb-4">{error}</p><Link to="/browse"><Button variant="ghost" icon={ArrowLeft}>Back</Button></Link></div>;
 
   return (
-    <div style={{ padding: 'var(--spacing-48) 0' }}>
-      <div className="container" style={{ maxWidth: 760 }}>
-        <Link to="/browse" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--spacing-8)', color: 'var(--color-slate)', fontSize: 'var(--text-body-sm)', marginBottom: 'var(--spacing-40)' }}>
-          ← Back to repository
+    <div className="py-8 lg:py-12">
+      <div className="container max-w-3xl">
+        <Link to="/browse" className="inline-flex items-center gap-1.5 text-sm text-slate hover:text-deep-indigo mb-8 group">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to repository
         </Link>
 
-        <Card shadow="subtle">
-          <div style={{ marginBottom: 'var(--spacing-24)' }}>
-            <div style={{ display: 'flex', gap: 'var(--spacing-12)', flexWrap: 'wrap', marginBottom: 'var(--spacing-16)' }}>
-              <Badge>{project.department_name}</Badge>
-              <Badge variant="muted">{project.year}</Badge>
-            </div>
-            <h1 style={{
-              fontFamily: 'var(--font-suisseintl)',
-              fontSize: 'var(--text-heading-lg)',
-              fontWeight: 'var(--font-weight-light)',
-              color: 'var(--color-deep-ink)',
-              lineHeight: 'var(--leading-heading-lg)',
-              letterSpacing: 'var(--tracking-heading-lg)',
-              marginBottom: 'var(--spacing-16)',
-            }}>
-              {project.title}
-            </h1>
-            <p style={{
-              fontFamily: 'var(--font-suisseintl)',
-              fontSize: 'var(--text-body-sm)',
-              color: 'var(--color-slate)',
-            }}>
-              By {project.author_name} · Uploaded by {project.uploader_name}
-            </p>
+        <Card padding={32} className="animate-fade-up">
+          <div className="flex items-center gap-2 mb-4">
+            <Badge>{project.department_name}</Badge>
+            <Badge variant="muted">{project.year}</Badge>
           </div>
 
-          <div style={{
-            borderTop: '1px solid var(--color-mist)',
-            paddingTop: 'var(--spacing-24)',
-          }}>
-            <h2 style={{
-              fontFamily: 'var(--font-suisseintl)',
-              fontSize: 'var(--text-body-lg)',
-              fontWeight: 'var(--font-weight-medium)',
-              color: 'var(--color-deep-ink)',
-              marginBottom: 'var(--spacing-12)',
-            }}>
-              Abstract
-            </h2>
-            <p style={{
-              fontSize: 'var(--text-body)',
-              color: 'var(--color-carbon)',
-              lineHeight: 'var(--leading-body)',
-              whiteSpace: 'pre-wrap',
-            }}>
-              {project.abstract}
-            </p>
+          <h1 className="text-2xl lg:text-3xl font-light text-deep-ink tracking-tight mb-6">{project.title}</h1>
+
+          <div className="flex flex-wrap items-center gap-4 p-4 bg-paper-white/50 rounded-xl mb-6">
+            <span className="flex items-center gap-2 text-sm text-slate"><User className="w-4 h-4" />{project.author_name}</span>
+            <span className="flex items-center gap-2 text-sm text-slate"><Building className="w-4 h-4" />{project.department_name}</span>
+            <span className="flex items-center gap-2 text-sm text-slate"><Calendar className="w-4 h-4" />{project.year}</span>
           </div>
+
+          <div className="border-t border-mist pt-6">
+            <h2 className="text-lg font-medium text-deep-ink mb-4">Abstract</h2>
+            <p className="text-carbon leading-relaxed whitespace-pre-wrap">{project.abstract}</p>
+          </div>
+
+          {project.file_name && (
+            <div className="mt-6 border-t border-mist pt-6">
+              <a href={projectService.downloadUrl(project.id)}>
+                <Button variant="ghost" icon={Download}>Download document</Button>
+              </a>
+            </div>
+          )}
         </Card>
       </div>
     </div>

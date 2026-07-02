@@ -6,11 +6,11 @@ import BrowsePage from './pages/BrowsePage.jsx';
 import ProjectDetailPage from './pages/ProjectDetailPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
-import VerifyEmailPage from './pages/VerifyEmailPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import UploadPage from './pages/UploadPage.jsx';
 import SimilarityCheckPage from './pages/SimilarityCheckPage.jsx';
+import SimilarityDetailPage from './pages/SimilarityDetailPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
 import AdminUsersPage from './pages/admin/AdminUsersPage.jsx';
@@ -53,8 +53,8 @@ export default function App() {
         <Route path="/projects/:id" element={<ProjectDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/similarity-check" element={<SimilarityCheckPage />} />
 
         {/* Authenticated */}
         <Route path="/dashboard" element={
@@ -67,9 +67,9 @@ export default function App() {
             <UploadPage />
           </ProtectedRoute>
         } />
-        <Route path="/similarity-check" element={
+        <Route path="/similarity/:id" element={
           <ProtectedRoute>
-            <SimilarityCheckPage />
+            <SimilarityDetailPage />
           </ProtectedRoute>
         } />
 

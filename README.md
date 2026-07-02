@@ -9,7 +9,7 @@ A Progressive Web Application for Nigerian university faculties to store final y
 - **Project Repository** — Browse, search, and filter all submitted projects
 - **Admin Console** — Manage users, departments, projects, and view similarity check logs
 - **PWA** — Installable, works offline for browsing cached projects
-- **Email Verification** — Secure registration with email verification and password reset
+- **Password Reset** — Account recovery by email
 
 ## Tech Stack
 
@@ -38,17 +38,48 @@ Single Node.js service running on Render Free Tier:
 ### Prerequisites
 
 - Node.js 20+
-- PostgreSQL (local or cloud)
+- PostgreSQL (only needed for production — see Local Mode below for testing)
 
-### Setup
+### Local Mode (no database setup needed)
+
+For quick local testing without setting up PostgreSQL:
 
 ```bash
-# Clone and install all dependencies
+# Install all dependencies
+npm install --prefix server
+npm install --prefix client
+
+# Copy env file (USE_LOCAL_DB=true is the default in the example)
+cp server/.env.example server/.env
+# Set JWT_SECRET in server/.env to any random 32+ char string
+
+# Seed the local JSON store with sample data (8 projects, 3 users, 4 departments)
+npm run seed:local --prefix server
+
+# Start development (server + client)
+npm run dev
+```
+
+Visit `http://localhost:5173`.
+
+**Test accounts** (all password: `password123`):
+- `admin@faculty.edu.ng` — admin
+- `student@faculty.edu.ng` — student
+
+Local data persists in `server/local-data.json` (gitignored). Delete the file to reset.
+
+### Production Mode (PostgreSQL)
+
+```bash
+# Install all dependencies
 npm run install:all
 
 # Configure server
 cp server/.env.example server/.env
-# Edit server/.env with your DATABASE_URL and JWT_SECRET
+# Edit server/.env:
+#   - Remove USE_LOCAL_DB line (or set to false)
+#   - Set DATABASE_URL to your PostgreSQL connection string
+#   - Set JWT_SECRET to a long random string
 
 # Run migrations
 npm run migrate
@@ -57,13 +88,32 @@ npm run migrate
 npm run dev
 ```
 
-Visit `http://localhost:5173` (client) and `http://localhost:10000` (server).
-
 ### First Admin Setup
 
 1. Add your email to `ADMIN_EMAILS` in your `.env` file (comma-separated)
 2. Register a new account with that email
-3. The account will automatically have admin role
+3. The account will automatically have the admin role
+
+## Local vs PostgreSQL Mode
+
+The app supports two storage backends, selected by the `USE_LOCAL_DB` env var:
+
+| Mode | When | Storage |
+|---|---|---|
+| `USE_LOCAL_DB=true` | Local testing | `server/local-data.json` (auto-created) |
+| `USE_LOCAL_DB` unset/false | Production | PostgreSQL via `DATABASE_URL` |
+
+To switch:
+```bash
+# Switch to local mode
+echo "USE_LOCAL_DB=true" >> server/.env
+
+# Switch back to PostgreSQL
+# Remove USE_LOCAL_DB from server/.env, then:
+npm run migrate
+```
+
+The two modes use the same API surface — all models and controllers work identically.
 
 ## Documentation
 

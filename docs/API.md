@@ -32,9 +32,6 @@ Clears the JWT cookie.
 ### GET `/auth/me`
 Returns the current authenticated user.
 
-### GET `/auth/verify-email?token=xxx`
-Verifies email and activates account.
-
 ### POST `/auth/forgot-password`
 Sends password reset email.
 
@@ -78,19 +75,25 @@ Auth required. Saves the project with generated embedding.
   "abstract": "...",
   "authorName": "...",
   "departmentId": "uuid",
-  "year": 2024
+  "year": 2024,
+  "originalFileName": "project.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "fileSize": 123456
 }
 ```
 
 ### GET `/projects/my/list`
 Auth required. Current user's uploaded projects.
 
+### GET `/projects/:id/download`
+Public. Downloads the uploaded project document when available.
+
 ---
 
 ## Similarity
 
 ### POST `/similarity/check`
-Auth required.
+Public. Authenticated users also get the check saved to their history.
 
 ```json
 {
