@@ -56,46 +56,46 @@ export default function BrowsePage() {
     <div className="py-8 lg:py-12">
       <div className="container max-w-5xl">
         <div className="mb-8">
-          <Badge className="inline-flex items-center gap-1.5 mb-3"><Library className="w-3.5 h-3.5" /> Project Repository</Badge>
-          <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight mb-2">Browse archive</h1>
-          <p className="text-slate">{pagination.total.toLocaleString()} projects</p>
+          <Badge className="inline-flex items-center gap-1.5 mb-3"><Library className="w-3.5 h-3.5" /> Project repository</Badge>
+          <h1 className="text-3xl lg:text-4xl font-medium text-deep-ink tracking-tight mb-2">Browse the archive</h1>
+          <p className="text-slate">{pagination.total.toLocaleString()} projects cataloged and ready to explore.</p>
         </div>
 
-        {/* Search & Filters */}
-        <div className="mb-8 space-y-4">
-          <SearchInput value={q} onChange={e => updateParam('q', e.target.value)} placeholder="Search by title..." size="lg" />
-          <div className="flex flex-wrap gap-3">
-            <Select value={department} onChange={e => updateParam('department', e.target.value)} options={departments.map(d => ({ value: d.id, label: d.name }))} placeholder="All departments" className="w-48" />
-            <Select value={year} onChange={e => updateParam('year', e.target.value)} options={years.map(y => ({ value: y, label: y.toString() }))} placeholder="All years" className="w-32" />
-            {hasFilters && <Button variant="ghost" onClick={() => setParams({})} icon={X}>Clear</Button>}
+        <Card padding={20} className="mb-8 card-3d">
+          <div className="space-y-4">
+            <SearchInput value={q} onChange={e => updateParam('q', e.target.value)} placeholder="Search by title, author, or abstract..." size="lg" />
+            <div className="flex flex-wrap gap-3">
+              <Select value={department} onChange={e => updateParam('department', e.target.value)} options={departments.map(d => ({ value: d.id, label: d.name }))} placeholder="All departments" className="w-52" />
+              <Select value={year} onChange={e => updateParam('year', e.target.value)} options={years.map(y => ({ value: y, label: y.toString() }))} placeholder="All years" className="w-36" />
+              {hasFilters && <Button variant="ghost" onClick={() => setParams({})} icon={X}>Clear filters</Button>}
+            </div>
           </div>
-        </div>
+        </Card>
 
-        {/* Results */}
         {loading ? (
           <div className="space-y-4">
-            {[1,2,3].map(i => <Card key={i} padding={20}><div className="h-16 loading-skeleton rounded" /></Card>)}
+            {[1,2,3].map(i => <Card key={i} padding={20} className="card-3d"><div className="h-16 loading-skeleton rounded-xl" /></Card>)}
           </div>
         ) : projects.length === 0 ? (
-          <Card><EmptyState icon="search" title="No projects found" actionLabel="Clear filters" actionIcon={X} action={() => setParams({})} /></Card>
+          <Card className="card-3d"><EmptyState icon="search" title="No projects found" description="Try adjusting your filters or clear them to see the full archive." actionLabel="Clear filters" actionIcon={X} action={() => setParams({})} /></Card>
         ) : (
           <div className="space-y-4">
             {projects.map((p, i) => (
               <div key={p.id} className="animate-fade-up" style={{ animationDelay: `${i * 30}ms` }}>
                 <Link to={`/projects/${p.id}`} className="block group">
-                  <Card padding={20} hover>
+                  <Card padding={20} hover className="card-3d">
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <div className="w-10 h-10 rounded-lg bg-pale-cyan/30 flex items-center justify-center flex-shrink-0">
-                          <FileText className="w-5 h-5 text-forest-teal" />
+                      <div className="flex items-start gap-4 flex-1 min-w-0">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-deep-indigo/6 text-deep-indigo shadow-[0_12px_22px_-18px_rgba(17,26,74,0.45)]">
+                          <FileText className="w-5 h-5" />
                         </div>
                         <div className="min-w-0">
-                          <h3 className="text-base font-medium text-deep-ink group-hover:text-deep-indigo transition-colors line-clamp-2">{p.title}</h3>
-                          <p className="text-sm text-slate line-clamp-2 mt-1">{p.abstract}</p>
-                          <div className="flex items-center gap-3 mt-2 text-xs text-slate">
-                            <span className="flex items-center gap-1"><Building className="w-3 h-3" />{p.department_name}</span>
-                            <span className="flex items-center gap-1"><User className="w-3 h-3" />{p.author_name}</span>
-                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{p.year}</span>
+                          <h3 className="text-base font-semibold text-deep-ink group-hover:text-deep-indigo transition-colors line-clamp-2">{p.title}</h3>
+                          <p className="text-sm text-slate line-clamp-2 mt-1.5 leading-6">{p.abstract}</p>
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-xs text-slate">
+                            <span className="flex items-center gap-1.5"><Building className="w-3 h-3" />{p.department_name}</span>
+                            <span className="flex items-center gap-1.5"><User className="w-3 h-3" />{p.author_name}</span>
+                            <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" />{p.year}</span>
                           </div>
                         </div>
                       </div>

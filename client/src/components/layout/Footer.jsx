@@ -10,15 +10,15 @@ export default function Footer() {
             <div className="w-8 h-8 rounded-lg bg-deep-indigo flex items-center justify-center">
               <BookOpen className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-deep-ink">Project Archive</span>
+            <span className="font-semibold text-deep-ink">Project Repository</span>
           </Link>
 
           <div className="flex items-center gap-6 text-sm text-slate">
-            <Link to="/browse" className="hover:text-deep-ink">Browse</Link>
-            <Link to="/register" className="hover:text-deep-ink">Get Started</Link>
+            <Link to="/similarity-check" className="hover:text-deep-ink">Check similarity</Link>
+            <Link to="/register" className="hover:text-deep-ink">Get started</Link>
           </div>
 
-          <p className="text-xs text-fog">© {new Date().getFullYear()} Faculty Project Archive</p>
+          <p className="text-xs text-fog">© {new Date().getFullYear()} Faculty Project Repository</p>
         </div>
       </div>
     </footer>

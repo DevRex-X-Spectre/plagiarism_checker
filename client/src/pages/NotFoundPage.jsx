@@ -16,7 +16,7 @@ export default function NotFoundPage() {
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link to="/"><Button variant="primary" size="lg" icon={ArrowLeft}>Home</Button></Link>
-          <Link to="/browse"><Button variant="ghost" size="lg" icon={Search}>Browse</Button></Link>
+          <Link to="/similarity-check"><Button variant="ghost" size="lg" icon={Search}>Check similarity</Button></Link>
         </div>
       </div>
     </div>

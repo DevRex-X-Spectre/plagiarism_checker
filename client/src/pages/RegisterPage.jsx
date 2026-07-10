@@ -32,7 +32,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-sm animate-fade-up">
         <div className="bg-card-white rounded-2xl shadow-lg border border-mist p-8">
           <h1 className="text-2xl font-light text-deep-ink tracking-tight mb-2">Create account</h1>
-          <p className="text-sm text-slate mb-6">Join the archive</p>
+          <p className="text-sm text-slate mb-6">Join the repository</p>
 
           {error && <div className="mb-4 flex items-start gap-2 p-3 bg-danger/5 border border-danger/20 rounded-lg text-danger text-sm"><AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />{error}</div>}
 
