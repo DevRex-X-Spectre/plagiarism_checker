@@ -11,17 +11,17 @@ export default function HomePage() {
     <div className="py-8 sm:py-12 lg:py-16">
       <div className="container max-w-6xl">
         <section className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
-          <div className="relative py-6 lg:py-10">
+          <div className="relative py-6 text-center lg:py-10 lg:text-left">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-forest-teal shadow-[0_10px_24px_-20px_rgba(17,26,74,0.45)]">
               <Sparkles className="h-3.5 w-3.5" /> Faculty repository
             </div>
-            <h1 className="max-w-3xl text-4xl font-medium leading-[1.04] tracking-tight text-deep-ink sm:text-5xl lg:text-6xl">
+            <h1 className="mx-auto max-w-3xl text-4xl font-medium leading-[1.04] tracking-tight text-deep-ink sm:text-5xl lg:mx-0 lg:text-6xl">
               A classic repository for checking ideas, preserving work, and keeping submissions in order.
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-7 text-slate sm:text-lg">
+            <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-slate sm:text-lg lg:mx-0">
               Search for similarity, review details with clarity, and confirm whether a topic has already been explored.
             </p>
-            <div className="mt-9 grid grid-cols-2 gap-2 sm:flex sm:gap-3">
+            <div className="mt-9 grid grid-cols-2 gap-2 sm:flex sm:justify-center sm:gap-3 lg:justify-start">
               <Link to="/similarity-check" className="min-w-0 sm:min-w-fit">
                 <Button size="lg" icon={Search} fullWidth className="h-11 whitespace-nowrap px-3 text-sm sm:h-auto sm:px-6 sm:py-3 sm:text-base">
                   Check similarity
@@ -33,7 +33,7 @@ export default function HomePage() {
                 </Button>
               </Link>
             </div>
-            <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate">
+            <div className="mt-8 flex flex-wrap justify-center gap-3 text-sm text-slate lg:justify-start">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-3 py-1.5 shadow-[0_10px_24px_-22px_rgba(17,26,74,0.45)]">
                 <ShieldCheck className="h-4 w-4 text-forest-teal" /> Structured review
               </span>
