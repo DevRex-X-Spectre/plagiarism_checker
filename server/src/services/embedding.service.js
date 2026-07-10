@@ -1,4 +1,4 @@
-import { pipeline, env, FeatureExtractionPipeline } from '@huggingface/transformers';
+import { pipeline, env } from '@huggingface/transformers';
 
 let embeddingPipeline = null;
 let modelReady = false;
@@ -8,7 +8,7 @@ const MODEL_NAME = 'Xenova/all-MiniLM-L6-v2';
 // Skip local cache check in production to use CDN
 if (process.env.NODE_ENV === 'production') {
   env.allowLocalModels = false;
-  env.useBrowserCache = true;
+  env.useBrowserCache = false;
 }
 
 export async function loadEmbeddingModel() {
