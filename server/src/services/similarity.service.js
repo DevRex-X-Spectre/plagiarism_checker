@@ -18,23 +18,31 @@ export function cosineSimilarity(a, b) {
   return dot / denominator;
 }
 
-export async function findSimilarProjects(queryText, threshold = SIMILARITY.DEFAULT_THRESHOLD) {
+export async function findSimilarProjects(queryText, threshold = SIMILARITY.DEFAULT_THRESHOLD, { mode = 'full' } = {}) {
   // Generate embedding for the query
   const queryEmbedding = await embedText(queryText);
+  const useTitleEmbedding = mode === 'title';
 
-  // Load all non-deleted project embeddings
+  // Load all non-deleted project embeddings. Topic-only checks use topic
+  // embeddings; checks with abstracts use full title+abstract embeddings.
   const result = await pool.query(
     `SELECT p.id, p.title, p.abstract, p.author_name, p.year,
             d.name as department_name,
+            p.title_embedding,
             p.embedding
      FROM projects p
      JOIN departments d ON d.id = p.department_id
      WHERE NOT p.is_deleted`
   );
 
-  const scored = result.rows
-    .map(row => {
-      const score = cosineSimilarity(queryEmbedding, row.embedding);
+  const scored = (await Promise.all(result.rows
+    .map(async row => {
+      const candidateEmbedding = useTitleEmbedding && row.title_embedding
+        ? row.title_embedding
+        : useTitleEmbedding
+        ? await embedText(row.title)
+        : row.embedding;
+      const score = cosineSimilarity(queryEmbedding, candidateEmbedding);
       return {
         projectId: row.id,
         title: row.title,
@@ -48,7 +56,7 @@ export async function findSimilarProjects(queryText, threshold = SIMILARITY.DEFA
           ? 'moderate'
           : 'low',
       };
-    })
+    })))
     .filter(r => r.score >= threshold)
     .sort((a, b) => b.score - a.score);
 

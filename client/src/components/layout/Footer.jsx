@@ -3,22 +3,15 @@ import { BookOpen } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="mt-24 border-t border-mist py-12">
+    <footer className="mt-14 border-t border-mist/70 py-5">
       <div className="container">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-deep-indigo flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-white" />
+        <div className="flex items-center justify-center">
+          <Link to="/" className="inline-flex items-center gap-2 text-slate transition-colors hover:text-deep-ink">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-deep-indigo text-white">
+              <BookOpen className="h-3.5 w-3.5" />
             </div>
-            <span className="font-semibold text-deep-ink">Project Repository</span>
+            <span className="text-sm font-medium">Project Repository</span>
           </Link>
-
-          <div className="flex items-center gap-6 text-sm text-slate">
-            <Link to="/similarity-check" className="hover:text-deep-ink">Check similarity</Link>
-            <Link to="/register" className="hover:text-deep-ink">Get started</Link>
-          </div>
-
-          <p className="text-xs text-fog">© {new Date().getFullYear()} Faculty Project Repository</p>
         </div>
       </div>
     </footer>

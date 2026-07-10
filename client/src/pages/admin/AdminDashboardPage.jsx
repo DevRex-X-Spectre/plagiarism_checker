@@ -31,9 +31,10 @@ export default function AdminDashboardPage() {
   return (
     <div className="py-8 lg:py-12">
       <div className="container max-w-5xl">
-        <div className="mb-10">
+        <div className="mb-8">
           <Badge className="inline-flex items-center gap-1.5 mb-3"><Shield className="w-3.5 h-3.5" /> Admin</Badge>
-          <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight">System overview</h1>
+          <h1 className="text-3xl lg:text-4xl font-medium text-deep-ink tracking-tight">Admin dashboard</h1>
+          <p className="mt-2 text-slate">Manage projects, users, departments, and similarity review logs.</p>
         </div>
 
         <AdminNav />
@@ -41,19 +42,43 @@ export default function AdminDashboardPage() {
         {!stats ? null : (
           <>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
           {navs.map((n, i) => (
             <Link key={n.label} to={n.href} className="animate-fade-up" style={{ animationDelay: `${i * 50}ms` }}>
-              <Card padding={20} hover className="text-center">
-                <n.icon className="w-6 h-6 text-deep-indigo mx-auto mb-2" />
-                <p className="text-2xl font-light text-deep-ink">{n.desc}</p>
-                <p className="text-sm text-slate">{n.label}</p>
+              <Card padding={16} hover className="h-full">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-2xl font-medium text-deep-ink">{n.desc}</p>
+                    <p className="text-sm text-slate">{n.label}</p>
+                  </div>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-deep-indigo/6 text-deep-indigo">
+                    <n.icon className="w-5 h-5" />
+                  </span>
+                </div>
               </Card>
             </Link>
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Card padding={20}>
+            <h2 className="text-base font-semibold text-deep-ink mb-4">Management</h2>
+            <div className="grid gap-2">
+              {navs.map(n => (
+                <Link key={n.href} to={n.href} className="group flex items-center gap-3 rounded-2xl border border-transparent p-3 transition-colors hover:border-mist hover:bg-white/70">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-deep-indigo/6 text-deep-indigo">
+                    <n.icon className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-deep-ink">{n.label}</span>
+                    <span className="block text-xs text-slate">{getAdminActionText(n.label)}</span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-fog transition-transform group-hover:translate-x-1 group-hover:text-deep-indigo" />
+                </Link>
+              ))}
+            </div>
+          </Card>
+
           <Card padding={20}>
             <h2 className="text-base font-medium text-deep-ink mb-4">Top searched topics</h2>
             {stats.topSearchedTopics.length === 0 ? (
@@ -70,7 +95,7 @@ export default function AdminDashboardPage() {
             )}
           </Card>
 
-          <Card padding={20}>
+          <Card padding={20} className="lg:col-span-2">
             <h2 className="text-base font-medium text-deep-ink mb-4">Projects by department</h2>
             {stats.projectsByDepartment.length === 0 ? (
               <p className="text-sm text-slate">No data yet</p>
@@ -91,4 +116,14 @@ export default function AdminDashboardPage() {
       </div>
     </div>
   );
+}
+
+function getAdminActionText(label) {
+  const copy = {
+    Users: 'Review accounts, roles, and access.',
+    Projects: 'Browse uploads and remove bad records.',
+    Logs: 'Audit similarity searches.',
+    Departments: 'Create, edit, and deactivate departments.',
+  };
+  return copy[label] || 'Open admin section.';
 }

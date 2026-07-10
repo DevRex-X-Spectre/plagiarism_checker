@@ -8,7 +8,7 @@ import Input from '../components/ui/Input.jsx';
 import EmptyState from '../components/ui/EmptyState.jsx';
 
 export default function SimilarityCheckPage() {
-  const [form, setForm] = useState({ title: '', abstract: '', threshold: 0.5 });
+  const [form, setForm] = useState({ title: '', abstract: '' });
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,7 +23,7 @@ export default function SimilarityCheckPage() {
     setLoading(true);
     setResults(null);
     try {
-      const res = await similarityService.check({ title: form.title, abstract: form.abstract || undefined, threshold: form.threshold });
+      const res = await similarityService.check({ title: form.title, abstract: form.abstract || undefined });
       setResults(res.data);
     } catch (err) {
       setError(err.message);
@@ -53,15 +53,6 @@ export default function SimilarityCheckPage() {
               <textarea value={form.abstract} onChange={e => setForm({ ...form, abstract: e.target.value })} rows={3} placeholder="Add a concise description to refine the search." className="w-full px-4 py-3 text-base bg-card-white border border-mist rounded-2xl outline-none transition-all duration-150 focus:border-deep-indigo focus:shadow-[0_0_0_4px_rgba(17,26,74,0.12)] resize-vertical" />
             </div>
 
-            <div className="rounded-2xl border border-mist/80 bg-white/60 p-4">
-              <div className="flex justify-between mb-3">
-                <label className="text-sm font-medium text-carbon">Threshold</label>
-                <span className="font-mono text-sm font-semibold text-deep-ink">{Math.round(form.threshold * 100)}%</span>
-              </div>
-              <input type="range" min="0.3" max="0.9" step="0.05" value={form.threshold} onChange={e => setForm({ ...form, threshold: parseFloat(e.target.value) })} className="w-full accent-deep-indigo" />
-              <p className="mt-2 text-xs text-slate">Lower values cast a wider net; higher values narrow the matches.</p>
-            </div>
-
             {error && <div className="flex items-center gap-2 p-3 bg-danger/5 border border-danger/20 rounded-2xl text-danger text-sm"><AlertCircle className="w-4 h-4" />{error}</div>}
 
             <Button type="submit" loading={loading} size="lg" fullWidth icon={Search}>Run review</Button>
@@ -70,7 +61,7 @@ export default function SimilarityCheckPage() {
 
         {results && !loading && (
           <div className="animate-fade-up">
-            <h2 className="text-xl font-medium text-deep-ink mb-4">{results.totalResults} {results.totalResults === 1 ? 'match' : 'matches'} above {Math.round(results.threshold * 100)}%</h2>
+            <h2 className="text-xl font-medium text-deep-ink mb-4">{results.totalResults} {results.totalResults === 1 ? 'match' : 'matches'} found</h2>
 
             {results.totalResults === 0 ? (
               <Card padding={32} className="text-center card-3d">
@@ -85,7 +76,7 @@ export default function SimilarityCheckPage() {
                   const color = scoreColor(r.score);
                   const colors = { danger: 'text-danger bg-danger/5', warning: 'text-warning bg-warning/5', success: 'text-success bg-success/5' };
                   return (
-                    <Link key={r.projectId} to={`/projects/${r.projectId}`} className="block animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>
+                    <Link key={r.projectId} to={`/projects/${r.projectId}`} state={{ fromApp: true, from: '/similarity-check', fromLabel: 'Back to search' }} className="block animate-fade-up" style={{ animationDelay: `${i * 60}ms` }}>
                       <Card padding={20} hover className="card-3d">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1 min-w-0">

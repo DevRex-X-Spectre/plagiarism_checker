@@ -50,7 +50,9 @@ export async function confirmUpload(req, res, next) {
     const { tempFileId, title, abstract, authorName, departmentId, year, originalFileName, mimeType, fileSize } = req.validated;
     const userId = req.user.id;
 
-    // Generate embedding from title + abstract
+    // Store separate vectors so title-only searches compare against topics,
+    // while full searches compare against title + abstract.
+    const titleEmbedding = await embedText(title.trim());
     const embeddingText = `${title.trim()} ${abstract.trim()}`;
     const embedding = await embedText(embeddingText);
 
@@ -61,6 +63,7 @@ export async function confirmUpload(req, res, next) {
       departmentId,
       year,
       uploadedBy: userId,
+      titleEmbedding,
       embedding,
       fileName: tempFileId,
       originalFileName: originalFileName || tempFileId,

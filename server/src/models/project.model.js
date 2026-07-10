@@ -77,12 +77,12 @@ export async function getProjectsByUser(userId) {
   return result.rows;
 }
 
-export async function createProject({ title, abstract, authorName, departmentId, year, uploadedBy, embedding, fileName, originalFileName, mimeType, fileSize }) {
+export async function createProject({ title, abstract, authorName, departmentId, year, uploadedBy, titleEmbedding, embedding, fileName, originalFileName, mimeType, fileSize }) {
   const result = await pool.query(
-    `INSERT INTO projects (title, abstract, author_name, department_id, year, uploaded_by, embedding, file_name, original_file_name, mime_type, file_size)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    `INSERT INTO projects (title, abstract, author_name, department_id, year, uploaded_by, title_embedding, embedding, file_name, original_file_name, mime_type, file_size)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
      RETURNING *`,
-    [title, abstract, authorName, departmentId, year, uploadedBy, embedding, fileName, originalFileName, mimeType || null, fileSize || null]
+    [title, abstract, authorName, departmentId, year, uploadedBy, titleEmbedding, embedding, fileName, originalFileName, mimeType || null, fileSize || null]
   );
   return result.rows[0];
 }

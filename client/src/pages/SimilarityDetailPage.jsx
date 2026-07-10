@@ -41,7 +41,7 @@ export default function SimilarityDetailPage() {
           {results.length === 0 ? (
             <Card><p className="text-slate">No matches were found.</p></Card>
           ) : results.map(result => (
-            <Link key={result.projectId} to={`/projects/${result.projectId}`}>
+            <Link key={result.projectId} to={`/projects/${result.projectId}`} state={{ fromApp: true, from: `/similarity/${id}`, fromLabel: 'Back to similarity report' }}>
               <Card padding={18} hover>
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">

@@ -59,7 +59,7 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-3">
                 {myProjects.slice(0, 5).map((p, i) => (
-                  <Link key={p.id} to={`/projects/${p.id}`} className="block animate-fade-up" style={{ animationDelay: `${i * 50}ms` }}>
+                  <Link key={p.id} to={`/projects/${p.id}`} state={{ fromApp: true, from: '/dashboard', fromLabel: 'Back to dashboard' }} className="block animate-fade-up" style={{ animationDelay: `${i * 50}ms` }}>
                     <Card padding={16} hover className="card-3d">
                       <div className="flex items-center justify-between gap-4">
                         <div className="min-w-0 flex-1">

@@ -23,7 +23,7 @@ export default function AdminDepartmentsPage() {
   const fetchDepartments = () => {
     setLoading(true);
     setError('');
-    adminService.stats().then(() => departmentService.listAll())
+    departmentService.listAll()
       .then(r => setDepartments(r.data.departments || []))
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));

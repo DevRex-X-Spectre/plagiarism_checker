@@ -11,14 +11,14 @@ const items = [
 
 export default function AdminNav() {
   return (
-    <nav className="mb-8 flex gap-2 overflow-x-auto pb-1">
+    <nav className="mb-8 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
       {items.map(({ to, label, icon: Icon, end }) => (
         <NavLink
           key={to}
           to={to}
           end={end}
           className={({ isActive }) =>
-            `inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+            `inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-colors sm:justify-start sm:rounded-full sm:px-4 ${
               isActive
                 ? 'border-deep-indigo bg-deep-indigo text-white'
                 : 'border-mist bg-white/70 text-carbon hover:border-fog hover:bg-white'

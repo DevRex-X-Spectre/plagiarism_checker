@@ -107,7 +107,7 @@ export default function UploadPage() {
             </div>
             <div className="mt-4 flex items-center gap-2 p-3 bg-pale-cyan/20 rounded-2xl text-sm text-forest-teal">
               <Sparkles className="w-4 h-4" />
-              We extract the title, abstract, author, and suggested department automatically.
+              We extract the title, abstract, and author automatically.
             </div>
           </Card>
         )}

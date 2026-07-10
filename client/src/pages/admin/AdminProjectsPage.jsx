@@ -76,7 +76,7 @@ export default function AdminProjectsPage() {
                  projects.map(p => (
                   <tr key={p.id} className="border-b border-mist last:border-0 hover:bg-paper-white/30">
                     <td className="px-4 py-3 max-w-xs">
-                      <Link to={`/projects/${p.id}`} className="text-sm font-medium text-deep-ink hover:text-deep-indigo flex items-center gap-1">
+                      <Link to={`/projects/${p.id}`} state={{ fromApp: true, from: '/admin/projects', fromLabel: 'Back to admin projects' }} className="text-sm font-medium text-deep-ink hover:text-deep-indigo flex items-center gap-1">
                         <span className="line-clamp-1">{p.title}</span><ExternalLink className="w-3 h-3 flex-shrink-0" />
                       </Link>
                     </td>

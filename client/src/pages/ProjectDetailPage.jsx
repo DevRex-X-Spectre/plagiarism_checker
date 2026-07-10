@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext.jsx';
 import { projectService } from '../services/project.service.js';
 import { ArrowLeft, Building, User, Calendar, Download } from 'lucide-react';
 import Card from '../components/ui/Card.jsx';
@@ -8,9 +9,24 @@ import Button from '../components/ui/Button.jsx';
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, isAdmin } = useAuth();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const fallbackBack = location.state?.from || (isAdmin ? '/admin/projects' : isAuthenticated ? '/dashboard' : '/similarity-check');
+  const backLabel = location.state?.fromLabel || (isAdmin ? 'Back to admin projects' : isAuthenticated ? 'Back to dashboard' : 'Back to search');
+  const canGoBack = location.state?.fromApp === true;
+
+  const handleBack = () => {
+    if (canGoBack) {
+      navigate(-1);
+      return;
+    }
+    navigate(fallbackBack);
+  };
 
   useEffect(() => {
     projectService.get(id)
@@ -20,14 +36,14 @@ export default function ProjectDetailPage() {
   }, [id]);
 
   if (loading) return <div className="py-32 text-center"><div className="w-8 h-8 border-2 border-mist border-t-deep-indigo rounded-full animate-spin mx-auto" /></div>;
-  if (error) return <div className="py-32 text-center"><p className="text-slate mb-4">{error}</p><Link to="/similarity-check"><Button variant="ghost" icon={ArrowLeft}>Back to search</Button></Link></div>;
+  if (error) return <div className="py-32 text-center"><p className="text-slate mb-4">{error}</p><Button variant="ghost" icon={ArrowLeft} onClick={handleBack}>{backLabel}</Button></div>;
 
   return (
     <div className="py-8 lg:py-12">
       <div className="container max-w-3xl">
-        <Link to="/similarity-check" className="inline-flex items-center gap-1.5 text-sm text-slate hover:text-deep-indigo mb-8 group">
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to search
-        </Link>
+        <button type="button" onClick={handleBack} className="inline-flex items-center gap-1.5 text-sm text-slate hover:text-deep-indigo mb-8 group">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> {backLabel}
+        </button>
 
         <Card padding={32} className="animate-fade-up card-3d">
           <div className="flex flex-wrap items-center gap-2 mb-5">

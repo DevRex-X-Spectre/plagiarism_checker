@@ -270,11 +270,11 @@ function buildSort(orderSql) {
   };
 }
 
-function extractLimitOffset(sql) {
+function extractLimitOffset(sql, params = []) {
   const limitM = sql.match(/LIMIT\s+\$(\d+)/i);
   const offsetM = sql.match(/OFFSET\s+\$(\d+)/i);
-  const limit = limitM ? parseInt(limitM[1], 10) : null;
-  const offset = offsetM ? parseInt(offsetM[1], 10) : null;
+  const limit = limitM ? Number(params[parseInt(limitM[1], 10) - 1]) : null;
+  const offset = offsetM ? Number(params[parseInt(offsetM[1], 10) - 1]) : null;
   return { limit, offset };
 }
 
@@ -410,7 +410,7 @@ export const localStore = {
       let rows = data.users.filter(predicate).map(stripPasswordHash);
       const sortFn = buildSort(sql);
       if (sortFn) rows.sort(sortFn);
-      const { limit, offset } = extractLimitOffset(sql);
+      const { limit, offset } = extractLimitOffset(sql, params);
       if (offset != null) rows = rows.slice(offset);
       if (limit != null) rows = rows.slice(0, limit);
 
@@ -543,12 +543,6 @@ export const localStore = {
       return { rows: [{ count: String(count) }], rowCount: 1 };
     }
 
-    // SELECT COUNT(*) FROM projects WHERE NOT is_deleted
-    if (/^SELECT\s+COUNT\(\*\)\s+FROM\s+projects\s+WHERE\s+NOT\s+is_deleted/i.test(sql)) {
-      const count = data.projects.filter(p => !p.is_deleted).length;
-      return { rows: [{ count: String(count) }], rowCount: 1 };
-    }
-
     // SELECT d.name, COUNT(p.id) FROM departments d LEFT JOIN ...
     if (/^SELECT\s+d\.name,\s*COUNT\(p\.id\)/i.test(sql)) {
       const rows = data.departments.map(d => ({
@@ -559,7 +553,7 @@ export const localStore = {
     }
 
     // SELECT year, COUNT(*) FROM projects WHERE NOT is_deleted GROUP BY year
-    if (/^SELECT\s+year,\s*COUNT\(\*\)\s+FROM\s+projects/i.test(sql)) {
+    if (/^SELECT\s+year,\s*COUNT\(\*\)(?:\s+as\s+\w+)?\s+FROM\s+projects/i.test(sql)) {
       const counts = {};
       for (const p of data.projects) {
         if (p.is_deleted) continue;
@@ -569,6 +563,12 @@ export const localStore = {
         .map(([year, count]) => ({ year: Number(year), count: String(count) }))
         .sort((a, b) => b.year - a.year);
       return { rows, rowCount: rows.length };
+    }
+
+    // SELECT COUNT(*) FROM projects WHERE NOT is_deleted
+    if (/^SELECT\s+COUNT\(\*\)\s+FROM\s+projects\s+WHERE\s+NOT\s+is_deleted/i.test(sql)) {
+      const count = data.projects.filter(p => !p.is_deleted).length;
+      return { rows: [{ count: String(count) }], rowCount: 1 };
     }
 
     // SELECT p.id, ... FROM projects p JOIN ... (full list)
@@ -581,7 +581,7 @@ export const localStore = {
 
       const sortFn = buildSort(sql);
       if (sortFn) rows.sort(sortFn);
-      const { limit, offset } = extractLimitOffset(sql);
+      const { limit, offset } = extractLimitOffset(sql, params);
       if (offset != null) rows = rows.slice(offset);
       if (limit != null) rows = rows.slice(0, limit);
 
@@ -633,10 +633,10 @@ export const localStore = {
       return { rows, rowCount: rows.length };
     }
 
-    // SELECT p.id, p.title, p.abstract, p.author_name, p.year, d.name as department_name, p.embedding
+    // SELECT p.id, p.title, p.abstract, p.author_name, p.year, d.name as department_name, p.title_embedding, p.embedding
     // FROM projects p JOIN departments d ON d.id = p.department_id WHERE NOT p.is_deleted
     // (used by similarity service to load all embeddings)
-    if (/^SELECT\s+p\.id,\s*p\.title,\s*p\.abstract,\s*p\.author_name,\s*p\.year,\s+d\.name\s+as\s+department_name,\s+p\.embedding\s+FROM\s+projects\s+p\s+JOIN\s+departments\s+d\s+ON\s+d\.id\s*=\s*p\.department_id\s+WHERE\s+NOT\s+p\.is_deleted/i.test(sql)) {
+    if (/^SELECT\s+p\.id,\s*p\.title,\s*p\.abstract,\s*p\.author_name,\s*p\.year,\s+d\.name\s+as\s+department_name,\s+p\.title_embedding,\s*p\.embedding\s+FROM\s+projects\s+p\s+JOIN\s+departments\s+d\s+ON\s+d\.id\s*=\s*p\.department_id\s+WHERE\s+NOT\s+p\.is_deleted/i.test(sql)) {
       const rows = data.projects
         .filter(p => !p.is_deleted)
         .map(p => {
@@ -648,6 +648,7 @@ export const localStore = {
             author_name: p.author_name,
             year: p.year,
             department_name: dept?.name,
+            title_embedding: p.title_embedding,
             embedding: p.embedding,
           };
         });
@@ -712,7 +713,7 @@ export const localStore = {
           result_count: Array.isArray(c.results) ? c.results.length : 0,
         }));
 
-      const { limit, offset } = extractLimitOffset(sql);
+      const { limit, offset } = extractLimitOffset(sql, params);
       if (offset != null) rows = rows.slice(offset);
       if (limit != null) rows = rows.slice(0, limit);
       return { rows, rowCount: rows.length };
@@ -741,7 +742,7 @@ export const localStore = {
           };
         });
 
-      const { limit, offset } = extractLimitOffset(sql);
+      const { limit, offset } = extractLimitOffset(sql, params);
       if (offset != null) rows = rows.slice(offset);
       if (limit != null) rows = rows.slice(0, limit);
       return { rows, rowCount: rows.length };

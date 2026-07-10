@@ -34,10 +34,11 @@ async function seed() {
 
   // Departments
   const deptData = [
+    { name: 'Software Engineering', code: 'SWE' },
     { name: 'Computer Science', code: 'CS' },
-    { name: 'Mathematics', code: 'MTH' },
-    { name: 'Physics', code: 'PHY' },
-    { name: 'Electrical Engineering', code: 'EE' },
+    { name: 'Information System', code: 'IS' },
+    { name: 'Information Technology', code: 'IT' },
+    { name: 'Cyber Security', code: 'CYB' },
   ];
 
   const deptIds = [];

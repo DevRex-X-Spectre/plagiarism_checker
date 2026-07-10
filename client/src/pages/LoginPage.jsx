@@ -18,8 +18,11 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(form.email, form.password);
-      navigate(location.state?.from || '/dashboard', { replace: true });
+      const data = await login(form.email, form.password);
+      const destination = data.user?.role === 'admin'
+        ? '/admin'
+        : location.state?.from || '/dashboard';
+      navigate(destination, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {

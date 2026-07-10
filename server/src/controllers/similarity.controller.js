@@ -4,7 +4,7 @@ import { SIMILARITY } from '../config/constants.js';
 
 export async function runSimilarityCheck(req, res, next) {
   try {
-    const { title, abstract, threshold } = req.body;
+    const { title, abstract } = req.body;
     const userId = req.user?.id || null;
 
     const queryText = abstract ? `${title.trim()} ${abstract.trim()}` : title.trim();
@@ -13,12 +13,11 @@ export async function runSimilarityCheck(req, res, next) {
       return res.status(400).json({ error: 'Title or abstract is required' });
     }
 
-    const normalizedThreshold = Math.max(
-      SIMILARITY.MIN_THRESHOLD,
-      Math.min(SIMILARITY.MAX_THRESHOLD, threshold || SIMILARITY.DEFAULT_THRESHOLD)
-    );
+    const normalizedThreshold = SIMILARITY.DEFAULT_THRESHOLD;
 
-    const results = await findSimilarProjects(queryText, normalizedThreshold);
+    const results = await findSimilarProjects(queryText, normalizedThreshold, {
+      mode: abstract ? 'full' : 'title',
+    });
 
     const check = userId
       ? await createSimilarityCheck({

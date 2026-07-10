@@ -7,14 +7,12 @@ import {
   getHistory,
   getCheck,
 } from '../controllers/similarity.controller.js';
-import { SIMILARITY } from '../config/constants.js';
 
 const router = Router();
 
 const checkSchema = z.object({
   title: z.string().min(5).max(300),
   abstract: z.string().max(3000).optional(),
-  threshold: z.number().min(SIMILARITY.MIN_THRESHOLD).max(SIMILARITY.MAX_THRESHOLD).optional(),
 });
 
 router.post('/check', optionalAuth, validate(checkSchema), runSimilarityCheck);

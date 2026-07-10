@@ -56,12 +56,12 @@ export default function App() {
 
         {/* Authenticated */}
         <Route path="/dashboard" element={
-          <ProtectedRoute>
+          <ProtectedRoute studentOnly>
             <DashboardPage />
           </ProtectedRoute>
         } />
         <Route path="/upload" element={
-          <ProtectedRoute>
+          <ProtectedRoute studentOnly>
             <UploadPage />
           </ProtectedRoute>
         } />

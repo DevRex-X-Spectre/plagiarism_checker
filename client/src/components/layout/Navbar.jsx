@@ -18,10 +18,13 @@ export default function Navbar() {
   };
 
   const links = [
-    { to: '/similarity-check', label: 'Check', icon: Search },
-    ...(isAuthenticated ? [{ to: '/upload', label: 'Upload', icon: Upload }] : []),
-    ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }] : []),
-    ...(isAdmin ? [{ to: '/admin', label: 'Admin', icon: Shield }] : []),
+    ...(isAdmin
+      ? [{ to: '/admin', label: 'Admin', icon: Shield }]
+      : [
+          { to: '/similarity-check', label: 'Check', icon: Search },
+          ...(isAuthenticated ? [{ to: '/upload', label: 'Upload', icon: Upload }] : []),
+          ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard }] : []),
+        ]),
   ];
 
   useEffect(() => {

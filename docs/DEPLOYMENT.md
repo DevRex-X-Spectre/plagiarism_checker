@@ -8,9 +8,31 @@ This project can be deployed as two Render services:
 
 ## 1. Create PostgreSQL
 
-Create a Render PostgreSQL database and copy its internal database URL.
+Create a PostgreSQL database on Neon, Supabase, or Render PostgreSQL and copy the connection URL.
 
 Use that value as `DATABASE_URL` on the backend service.
+
+### Neon
+
+1. Create a Neon project.
+2. Open the connection details for the database.
+3. Copy the Node/Postgres connection string.
+4. Make sure it includes `sslmode=require`.
+
+Example:
+
+```text
+postgresql://user:password@ep-example.us-east-1.aws.neon.tech/neondb?sslmode=require
+```
+
+### Supabase
+
+1. Create a Supabase project.
+2. Open **Project Settings** -> **Database**.
+3. Copy the Postgres connection string.
+4. Use the connection string as `DATABASE_URL`.
+
+If Supabase gives both direct and pooler URLs, either can work for this app. For long-running Render web services, the pooler URL is usually the safer default.
 
 ## 2. Deploy The Backend
 
@@ -45,6 +67,13 @@ Add this backend release command so tables are created on deploy:
 
 ```bash
 npm run migrate
+```
+
+You can also run migrations manually from your machine:
+
+```bash
+cd server
+USE_LOCAL_DB=false NODE_ENV=production DATABASE_URL="<your-postgres-url>" npm run migrate
 ```
 
 After backend deployment, copy the backend public URL, for example:

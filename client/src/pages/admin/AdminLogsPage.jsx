@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { adminService } from '../../services/admin.service.js';
 import { Activity } from 'lucide-react';
 import Card from '../../components/ui/Card.jsx';
-import Badge from '../../components/ui/Badge.jsx';
 import Select from '../../components/ui/Select.jsx';
 import SearchInput from '../../components/ui/SearchInput.jsx';
 import Pagination from '../../components/ui/Pagination.jsx';
@@ -31,7 +30,6 @@ export default function AdminLogsPage() {
     }).catch(err => setError(err.message)).finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchLogs(); }, []);
   useEffect(() => {
     adminService.users({ limit: 100 }).then(r => setUsers(r.data.users || [])).catch(() => {});
   }, []);
@@ -57,16 +55,15 @@ export default function AdminLogsPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead><tr className="border-b border-mist bg-paper-white/50">
-                {['Topic', 'User', 'Threshold', 'Results', 'Date'].map(h => <th key={h} className="px-4 py-3 text-left text-xs font-mono text-slate uppercase">{h}</th>)}
+                {['Topic', 'User', 'Results', 'Date'].map(h => <th key={h} className="px-4 py-3 text-left text-xs font-mono text-slate uppercase">{h}</th>)}
               </tr></thead>
               <tbody>
-                {loading ? <tr><td colSpan={5} className="px-4 py-8 text-center text-slate">Loading...</td></tr> :
-                 logs.length === 0 ? <tr><td colSpan={5} className="px-4 py-8 text-center text-slate">No logs yet</td></tr> :
+                {loading ? <tr><td colSpan={4} className="px-4 py-8 text-center text-slate">Loading...</td></tr> :
+                 logs.length === 0 ? <tr><td colSpan={4} className="px-4 py-8 text-center text-slate">No logs yet</td></tr> :
                  logs.map(log => (
                   <tr key={log.id} className="border-b border-mist last:border-0 hover:bg-paper-white/30">
                     <td className="px-4 py-3 max-w-xs"><span className="text-sm text-deep-ink line-clamp-1">{log.query_text}</span></td>
                     <td className="px-4 py-3"><div><span className="text-sm text-slate block">{log.user_name}</span><span className="text-xs text-fog">{log.user_email}</span></div></td>
-                    <td className="px-4 py-3"><Badge>{Math.round(log.threshold * 100)}%+</Badge></td>
                     <td className="px-4 py-3"><span className="text-sm text-slate">{log.result_count}</span></td>
                     <td className="px-4 py-3"><span className="text-xs text-slate">{new Date(log.created_at).toLocaleDateString()}</span></td>
                   </tr>

@@ -20,7 +20,17 @@ BEGIN
   END IF;
 END $$;
 
-ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('student', 'admin'));
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conrelid = 'users'::regclass
+      AND conname = 'users_role_check'
+  ) THEN
+    ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('student', 'admin'));
+  END IF;
+END $$;
 
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS file_name TEXT;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS original_file_name TEXT;
