@@ -20,7 +20,9 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use(cors({
-  origin: env.clientOrigin,
+  // Reflect any requesting origin so credentialed requests work from local
+  // development and separately deployed frontends without an origin allowlist.
+  origin: true,
   credentials: true,
 }));
 

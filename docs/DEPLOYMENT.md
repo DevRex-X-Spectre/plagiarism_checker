@@ -54,7 +54,7 @@ DATABASE_URL=<your-render-postgres-internal-url>
 JWT_SECRET=<generate-with-openssl-rand-hex-32>
 ADMIN_EMAILS=admin@gmail.com
 CLIENT_ORIGIN=https://your-frontend-static-site.onrender.com
-COOKIE_SAME_SITE=lax
+COOKIE_SAME_SITE=none
 RESEND_API_KEY=<optional-resend-api-key>
 EMAIL_FROM=noreply@yourdomain.com
 UPLOAD_DIR=uploads
@@ -113,7 +113,9 @@ Without this, direct visits to routes like `/admin` or `/similarity-check` can r
 
 ## 5. Cookie And CORS Notes
 
-Set backend `CLIENT_ORIGIN` to the exact frontend URL, including `https://`.
+Set backend `CLIENT_ORIGIN` to the exact frontend URL, including `https://`, so
+password-reset emails link back to the correct frontend. The API accepts CORS
+requests from every origin, including credentialed requests.
 
 If both services use Render `*.onrender.com` URLs, `COOKIE_SAME_SITE=lax` should work. If you later split the frontend and backend across different sites/domains and login cookies do not persist, set:
 
