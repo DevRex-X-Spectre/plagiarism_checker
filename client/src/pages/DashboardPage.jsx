@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { projectService } from '../services/project.service.js';
 import { similarityService } from '../services/project.service.js';
@@ -11,6 +11,7 @@ import EmptyState from '../components/ui/EmptyState.jsx';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [myProjects, setMyProjects] = useState([]);
   const [checkHistory, setCheckHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +54,7 @@ export default function DashboardPage() {
               <Card className="card-3d"><p className="text-center py-8 text-slate">Loading your projects...</p></Card>
             ) : myProjects.length === 0 ? (
               <Card className="card-3d">
-                <EmptyState icon="upload" title="No projects yet" description="Upload your first project to start building your archive." actionLabel="Upload now" actionIcon={Upload} action={() => window.location.href = '/upload'} />
+                <EmptyState icon="upload" title="No projects yet" description="Upload your first project to start building your archive." actionLabel="Upload now" actionIcon={Upload} action={() => navigate('/upload')} />
               </Card>
             ) : (
               <div className="space-y-3">
@@ -82,7 +83,7 @@ export default function DashboardPage() {
               <Card className="card-3d"><p className="text-center py-8 text-slate">Loading your history...</p></Card>
             ) : checkHistory.length === 0 ? (
               <Card className="card-3d">
-                <EmptyState icon="search" title="No checks yet" description="Run your first similarity review to see results here." actionLabel="Check now" actionIcon={Search} action={() => window.location.href = '/similarity-check'} />
+                <EmptyState icon="search" title="No checks yet" description="Run your first similarity review to see results here." actionLabel="Check now" actionIcon={Search} action={() => navigate('/similarity-check')} />
               </Card>
             ) : (
               <div className="space-y-3">

@@ -4,24 +4,29 @@ import { adminService } from '../../services/admin.service.js';
 import { Users, FileText, Activity, Building2, ArrowRight, Shield } from 'lucide-react';
 import Card from '../../components/ui/Card.jsx';
 import Badge from '../../components/ui/Badge.jsx';
+import AdminNav from '../../components/admin/AdminNav.jsx';
+import AdminNotice from '../../components/admin/AdminNotice.jsx';
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    adminService.stats().then(r => setStats(r.data.stats)).finally(() => setLoading(false));
+    adminService.stats()
+      .then(r => setStats(r.data.stats))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <div className="py-32 text-center"><div className="w-8 h-8 border-2 border-mist border-t-deep-indigo rounded-full animate-spin mx-auto" /></div>;
-  if (!stats) return null;
 
-  const navs = [
+  const navs = stats ? [
     { label: 'Users', desc: `${stats.totalUsers}`, href: '/admin/users', icon: Users },
     { label: 'Projects', desc: `${stats.totalProjects}`, href: '/admin/projects', icon: FileText },
     { label: 'Logs', desc: `${stats.totalSimilarityChecks}`, href: '/admin/logs', icon: Activity },
     { label: 'Departments', desc: `${stats.projectsByDepartment.length}`, href: '/admin/departments', icon: Building2 },
-  ];
+  ] : [];
 
   return (
     <div className="py-8 lg:py-12">
@@ -30,6 +35,11 @@ export default function AdminDashboardPage() {
           <Badge className="inline-flex items-center gap-1.5 mb-3"><Shield className="w-3.5 h-3.5" /> Admin</Badge>
           <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight">System overview</h1>
         </div>
+
+        <AdminNav />
+        <AdminNotice>{error}</AdminNotice>
+        {!stats ? null : (
+          <>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
           {navs.map((n, i) => (
@@ -76,6 +86,8 @@ export default function AdminDashboardPage() {
             )}
           </Card>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import Badge from '../../components/ui/Badge.jsx';
 import Select from '../../components/ui/Select.jsx';
 import SearchInput from '../../components/ui/SearchInput.jsx';
 import Pagination from '../../components/ui/Pagination.jsx';
+import AdminNav from '../../components/admin/AdminNav.jsx';
+import AdminNotice from '../../components/admin/AdminNotice.jsx';
 import { useDebounce } from '../../hooks/useDebounce.js';
 
 export default function AdminLogsPage() {
@@ -14,17 +16,19 @@ export default function AdminLogsPage() {
   const [filters, setFilters] = useState({ query: '', userId: '' });
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const debouncedQuery = useDebounce(filters.query, 350);
 
   const fetchLogs = (page = 1) => {
     setLoading(true);
+    setError('');
     const params = { page };
     if (filters.query) params.query = filters.query;
     if (filters.userId) params.userId = filters.userId;
     adminService.similarityLogs(params).then(r => {
       setLogs(r.data.checks);
       setPagination({ total: r.data.total, page: r.data.page, totalPages: r.data.totalPages });
-    }).finally(() => setLoading(false));
+    }).catch(err => setError(err.message)).finally(() => setLoading(false));
   };
 
   useEffect(() => { fetchLogs(); }, []);
@@ -40,6 +44,9 @@ export default function AdminLogsPage() {
           <Badge className="inline-flex items-center gap-1.5 mb-3"><Activity className="w-3.5 h-3.5" /> Logs</Badge>
           <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight">Similarity check logs</h1>
         </div>
+
+        <AdminNav />
+        <AdminNotice>{error}</AdminNotice>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
           <SearchInput value={filters.query} onChange={e => setFilters({ ...filters, query: e.target.value })} placeholder="Search topics..." />

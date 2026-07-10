@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import fs from 'fs';
+import path from 'path';
 import { errorHandler } from './middleware/error.middleware.js';
 import { warmUp, isModelReady } from './services/embedding.service.js';
 import { env } from './config/env.js';
@@ -44,14 +46,17 @@ app.use('/api/departments', departmentsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Serve React app in production
-if (env.nodeEnv === 'production') {
+const clientDistPath = path.resolve('client/dist');
+
+// Serve React app in production only when the client build exists. This keeps
+// the same server usable for API-only deployments.
+if (env.nodeEnv === 'production' && fs.existsSync(path.join(clientDistPath, 'index.html'))) {
   const { default: serveStatic } = await import('serve-static');
-  app.use(serveStatic('client/dist', { index: ['index.html'] }));
+  app.use(serveStatic(clientDistPath, { index: ['index.html'] }));
 
   // SPA fallback
   app.get('*', (req, res) => {
-    res.sendFile('client/dist/index.html', { root: '.' });
+    res.sendFile(path.join(clientDistPath, 'index.html'));
   });
 }
 

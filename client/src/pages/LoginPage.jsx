@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { AlertCircle, ArrowRight, Check } from 'lucide-react';
 import Button from '../components/ui/Button.jsx';
@@ -8,6 +8,7 @@ import Input from '../components/ui/Input.jsx';
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(form.email, form.password);
-      navigate('/dashboard');
+      navigate(location.state?.from || '/dashboard', { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {

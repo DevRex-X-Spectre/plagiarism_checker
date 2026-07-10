@@ -1,106 +1,115 @@
-# Deployment Guide — Render Free Tier
+# Deployment Guide - Render Static Frontend + Web Service Backend
 
-## Prerequisites
+This project can be deployed as two Render services:
 
-1. A [Render](https://render.com) account
-2. A [Resend](https://resend.com) account for email (free: 100 emails/day)
+- Frontend: Render Static Site from `client/`
+- Backend: Render Web Service from `server/`
+- Database: Render PostgreSQL
 
----
+## 1. Create PostgreSQL
 
-## Step 1: Create a PostgreSQL Database
+Create a Render PostgreSQL database and copy its internal database URL.
 
-1. Go to Render Dashboard → **New** → **PostgreSQL**
-2. Name: `project-archive-db`
-3. Choose the **Free** plan
-4. Copy the **Internal Database URL** — you'll need this for the next step
+Use that value as `DATABASE_URL` on the backend service.
 
----
+## 2. Deploy The Backend
 
-## Step 2: Create the Web Service
-
-1. Go to Render Dashboard → **New** → **Web Service**
-2. Connect your GitHub repo
-3. Configure:
+Create a Render **Web Service**.
 
 | Setting | Value |
 |---|---|
-| **Name** | `project-archive` |
-| **Region** | Choose closest to you |
-| **Branch** | `main` |
-| **Root Directory** | (leave empty) |
-| **Runtime** | `Node` |
-| **Build Command** | `cd client && npm ci && npm run build && cd ../server && npm ci` |
-| **Start Command** | `cd server && node src/server.js` |
-| **Health Check Path** | `/health` |
+| Root Directory | `server` |
+| Runtime | `Node` |
+| Build Command | `npm ci` |
+| Start Command | `npm start` |
+| Health Check Path | `/health` |
 
----
+Backend environment variables:
 
-## Step 3: Set Environment Variables
-
-In Render's environment variables for your web service:
-
-```
+```env
 NODE_ENV=production
-PORT=10000
-DATABASE_URL=<your-postgres-internal-url>
-JWT_SECRET=<generate with: openssl rand -hex 32>
-ADMIN_EMAILS=admin@yourfaculty.edu.ng,hod@yourfaculty.edu.ng
-RESEND_API_KEY=<from resend.com dashboard>
-EMAIL_FROM=noreply@yourfaculty.edu.ng
-CLIENT_ORIGIN=https://project-archive.onrender.com
+DATABASE_URL=<your-render-postgres-internal-url>
+JWT_SECRET=<generate-with-openssl-rand-hex-32>
+ADMIN_EMAILS=admin@gmail.com
+CLIENT_ORIGIN=https://your-frontend-static-site.onrender.com
+COOKIE_SAME_SITE=lax
+RESEND_API_KEY=<optional-resend-api-key>
+EMAIL_FROM=noreply@yourdomain.com
+UPLOAD_DIR=uploads
+MAX_FILE_SIZE=20971520
 ```
 
-> **Important:** Replace `project-archive.onrender.com` with your actual Render service URL.
+Do not set `USE_LOCAL_DB` in production.
 
----
-
-## Step 4: Add Release Command
-
-Under **Settings** → **Build & Deploy** → **Release Command**:
+Add this backend release command so tables are created on deploy:
 
 ```bash
-cd server && node src/db/migrate.js
+npm run migrate
 ```
 
-This runs database migrations on every deploy.
+After backend deployment, copy the backend public URL, for example:
 
----
+```text
+https://project-archive-api.onrender.com
+```
 
-## Step 5: Deploy
+## 3. Deploy The Frontend
 
-Click **Create Web Service**. The first deploy will:
-1. Build the React app
-2. Install server dependencies
-3. Run migrations (creates tables)
-4. Start the server
+Create a Render **Static Site**.
 
----
+| Setting | Value |
+|---|---|
+| Root Directory | `client` |
+| Build Command | `npm ci && npm run build` |
+| Publish Directory | `dist` |
 
-## Keeping the Service Warm (Free Tier)
+Frontend environment variables:
 
-Render's free tier sleeps after 15 minutes of inactivity. To prevent cold-start delays on the embedding model:
+```env
+VITE_API_BASE_URL=https://your-backend-web-service.onrender.com/api
+VITE_APP_TITLE=Project Archive
+```
 
-1. Create a free [UptimeRobot](https://uptimerobot.com) account
-2. Add a new monitor pointing to your Render service URL with `/health`
-3. Set the check interval to **14 minutes**
+Vite reads `VITE_*` values during build, so redeploy the static site after changing `VITE_API_BASE_URL`.
 
-This keeps the service active and the model warm.
+## 4. Add Static Site Rewrite
 
----
+Because the frontend uses React Router, add this Render Static Site rewrite:
 
-## Updating the App
+| Source | Destination | Action |
+|---|---|---|
+| `/*` | `/index.html` | `Rewrite` |
 
-Push to your `main` branch. Render automatically redeploys.
+Without this, direct visits to routes like `/admin` or `/similarity-check` can return 404.
 
----
+## 5. Cookie And CORS Notes
 
-## Troubleshooting
+Set backend `CLIENT_ORIGIN` to the exact frontend URL, including `https://`.
 
-### "Migration failed: relation does not exist"
-The migrations ran before the database was fully provisioned. Re-trigger a deploy from the Render dashboard, or run the migration manually via the Render Shell.
+If both services use Render `*.onrender.com` URLs, `COOKIE_SAME_SITE=lax` should work. If you later split the frontend and backend across different sites/domains and login cookies do not persist, set:
 
-### Embedding model takes too long on first check
-Normal on free tier. The first similarity check after a cold start takes ~5–8 seconds while the model loads. UptimeRobot pinging every 14 minutes prevents this.
+```env
+COOKIE_SAME_SITE=none
+```
 
-### Emails not sending
-Verify your `RESEND_API_KEY` is set in Render environment variables. In development, emails print to the server console.
+Keep `NODE_ENV=production` so cookies are marked secure.
+
+## 6. First Admin Login
+
+This local seeded login does not automatically exist in production PostgreSQL. To make `admin@gmail.com` an admin in production:
+
+1. Keep `ADMIN_EMAILS=admin@gmail.com` on the backend.
+2. Register `admin@gmail.com` from the deployed frontend.
+3. The backend assigns the `admin` role during registration.
+
+## 7. Free Tier Notes
+
+Render free web services can sleep. The first request after sleep may be slow because the embedding model loads in memory.
+
+Point an uptime monitor at:
+
+```text
+https://your-backend-web-service.onrender.com/health
+```
+
+Render free filesystems are ephemeral. Uploaded files in `server/uploads` can disappear after redeploys/restarts. Project metadata remains in PostgreSQL, but uploaded original documents need persistent storage for production-grade file retention.

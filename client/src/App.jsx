@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext.jsx';
 import Layout from './components/layout/Layout.jsx';
 import HomePage from './pages/HomePage.jsx';
-import BrowsePage from './pages/BrowsePage.jsx';
 import ProjectDetailPage from './pages/ProjectDetailPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
@@ -49,7 +48,6 @@ export default function App() {
       <Routes>
         {/* Public */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/browse" element={<BrowsePage />} />
         <Route path="/projects/:id" element={<ProjectDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

@@ -2,7 +2,7 @@
 // Usage: node src/config/seedLocal.js
 //
 // Login credentials after seeding:
-//   admin@faculty.edu.ng  /  password123   (admin)
+//   admin@gmail.com       /  Admin1234     (admin)
 //   student@faculty.edu.ng /  password123  (student)
 
 import bcrypt from 'bcrypt';
@@ -14,19 +14,20 @@ async function seed() {
   // Reset
   await localStore._reset();
 
-  const passwordHash = await bcrypt.hash('password123', 10);
+  const adminPasswordHash = await bcrypt.hash('Admin1234', 10);
+  const studentPasswordHash = await bcrypt.hash('password123', 10);
   // Users
   await localStore.query(
     `INSERT INTO users (email, password_hash, full_name, role)
      VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, role, is_active, created_at`,
-    ['admin@faculty.edu.ng', passwordHash, 'Faculty Admin', 'admin']
+    ['admin@gmail.com', adminPasswordHash, 'Faculty Admin', 'admin']
   );
   const data = localStore._getData();
 
   await localStore.query(
     `INSERT INTO users (email, password_hash, full_name, role)
      VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, role, is_active, created_at`,
-    ['student@faculty.edu.ng', passwordHash, 'Ada Lovelace', 'student']
+    ['student@faculty.edu.ng', studentPasswordHash, 'Ada Lovelace', 'student']
   );
 
   const studentId = data.users.find(u => u.email === 'student@faculty.edu.ng').id;
@@ -154,9 +155,9 @@ async function seed() {
   // Print summary
   console.log('✅ Seed complete!');
   console.log('');
-  console.log('📧 Test accounts (all use password: password123):');
-  console.log('   admin@faculty.edu.ng    (admin)');
-  console.log('   student@faculty.edu.ng  (student)');
+  console.log('📧 Test accounts:');
+  console.log('   admin@gmail.com         / Admin1234    (admin)');
+  console.log('   student@faculty.edu.ng  / password123  (student)');
   console.log('');
   console.log(`📁 ${data.departments.length} departments`);
   console.log(`📚 ${data.projects.length} sample projects`);

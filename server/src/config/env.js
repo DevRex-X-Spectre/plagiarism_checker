@@ -17,6 +17,8 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
+const cookieSameSite = (process.env.COOKIE_SAME_SITE || 'lax').toLowerCase();
+
 export const env = {
   nodeEnv: process.env.NODE_ENV,
   port: parseInt(process.env.PORT || '10000', 10),
@@ -29,6 +31,7 @@ export const env = {
   resendApiKey: process.env.RESEND_API_KEY || '',
   emailFrom: process.env.EMAIL_FROM || 'noreply@projectarchive.com',
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  cookieSameSite: ['lax', 'strict', 'none'].includes(cookieSameSite) ? cookieSameSite : 'lax',
   uploadDir: process.env.UPLOAD_DIR || 'uploads',
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '20971520', 10), // 20MB
   useLocalDb,

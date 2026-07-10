@@ -27,7 +27,7 @@ export default function HomePage() {
                   Check similarity
                 </Button>
               </Link>
-              <Link to={isAuthenticated ? '/upload' : '/login'} className="min-w-0 sm:min-w-fit">
+              <Link to={isAuthenticated ? '/upload' : '/login'} state={isAuthenticated ? undefined : { from: '/upload' }} className="min-w-0 sm:min-w-fit">
                 <Button variant="ghost" size="lg" icon={Upload} fullWidth className="h-11 whitespace-nowrap px-3 text-sm sm:h-auto sm:px-6 sm:py-3 sm:text-base">
                   Submit a project
                 </Button>
@@ -49,7 +49,7 @@ export default function HomePage() {
             </div>
             <div className="grid gap-2 p-4">
               <Action to="/similarity-check" icon={Search} title="Check an idea" text="Compare topic and abstract against the repository." />
-              <Action to={isAuthenticated ? '/upload' : '/login'} icon={Upload} title="Submit a project" text="Sign in to upload and preserve your work." />
+              <Action to={isAuthenticated ? '/upload' : '/login'} state={isAuthenticated ? undefined : { from: '/upload' }} icon={Upload} title="Submit a project" text="Sign in to upload and preserve your work." />
             </div>
           </Card>
         </section>
@@ -58,9 +58,9 @@ export default function HomePage() {
   );
 }
 
-function Action({ to, icon: Icon, title, text }) {
+function Action({ to, state, icon: Icon, title, text }) {
   return (
-    <Link to={to} className="group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 transition-all duration-200 hover:border-white/70 hover:bg-white/70 hover:shadow-[0_16px_30px_-22px_rgba(17,26,74,0.4)]">
+    <Link to={to} state={state} className="group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 transition-all duration-200 hover:border-white/70 hover:bg-white/70 hover:shadow-[0_16px_30px_-22px_rgba(17,26,74,0.4)]">
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-deep-indigo/6 text-deep-indigo shadow-[0_12px_22px_-18px_rgba(17,26,74,0.4)]">
         <Icon className="h-5 w-5" />
       </span>

@@ -1,42 +1,61 @@
 import { useEffect, useState } from 'react';
 import { adminService } from '../../services/admin.service.js';
+import { departmentService } from '../../services/project.service.js';
 import { Building2, Plus, Edit3, PowerOff } from 'lucide-react';
 import Card from '../../components/ui/Card.jsx';
 import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
 import Input from '../../components/ui/Input.jsx';
 import Modal from '../../components/ui/Modal.jsx';
+import AdminNav from '../../components/admin/AdminNav.jsx';
+import AdminNotice from '../../components/admin/AdminNotice.jsx';
+import ConfirmDialog from '../../components/admin/ConfirmDialog.jsx';
 
 export default function AdminDepartmentsPage() {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editDept, setEditDept] = useState(null);
+  const [deactivateTarget, setDeactivateTarget] = useState(null);
+  const [deactivating, setDeactivating] = useState(false);
 
   const fetchDepartments = () => {
     setLoading(true);
-    adminService.stats().then(() => import('../../services/project.service.js').then(m => m.departmentService.listAll()))
+    setError('');
+    adminService.stats().then(() => departmentService.listAll())
       .then(r => setDepartments(r.data.departments || []))
-      .catch(() => {})
+      .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => { fetchDepartments(); }, []);
 
   const handleCreate = async (data) => {
-    try { await adminService.createDepartment(data); setShowModal(false); fetchDepartments(); }
-    catch (err) { alert(err.message); }
+    await adminService.createDepartment(data);
+    setShowModal(false);
+    fetchDepartments();
   };
 
   const handleUpdate = async (data) => {
-    try { await adminService.updateDepartment(editDept.id, data); setEditDept(null); fetchDepartments(); }
-    catch (err) { alert(err.message); }
+    await adminService.updateDepartment(editDept.id, data);
+    setEditDept(null);
+    fetchDepartments();
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Deactivate this department?')) return;
-    try { await adminService.updateDepartment(id, { isActive: false }); fetchDepartments(); }
-    catch (err) { alert(err.message); }
+  const handleDeactivate = async () => {
+    if (!deactivateTarget) return;
+    setDeactivating(true);
+    setError('');
+    try {
+      await adminService.updateDepartment(deactivateTarget.id, { isActive: false });
+      setDeactivateTarget(null);
+      fetchDepartments();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeactivating(false);
+    }
   };
 
   return (
@@ -49,6 +68,9 @@ export default function AdminDepartmentsPage() {
           </div>
           <Button variant="primary" icon={Plus} onClick={() => setShowModal(true)}>Add</Button>
         </div>
+
+        <AdminNav />
+        <AdminNotice>{error}</AdminNotice>
 
         {loading ? <Card padding={20}><p className="text-center text-slate">Loading...</p></Card> :
          departments.length === 0 ? <Card padding={32}><div className="text-center"><Building2 className="w-10 h-10 text-fog mx-auto mb-3" /><p className="text-slate">No departments yet</p></div></Card> :
@@ -67,7 +89,7 @@ export default function AdminDepartmentsPage() {
                     <td className="px-4 py-3 text-right">
                       <div className="flex gap-2 justify-end">
                         <Button variant="ghost" size="sm" icon={Edit3} onClick={() => setEditDept(d)}>Edit</Button>
-                        {d.is_active && <Button variant="ghost" size="sm" icon={PowerOff} onClick={() => handleDelete(d.id)} className="text-danger">Off</Button>}
+                        {d.is_active && <Button variant="ghost" size="sm" icon={PowerOff} onClick={() => setDeactivateTarget(d)} className="text-danger">Off</Button>}
                       </div>
                     </td>
                   </tr>
@@ -80,6 +102,15 @@ export default function AdminDepartmentsPage() {
 
       {showModal && <DepartmentModal onClose={() => setShowModal(false)} onSubmit={handleCreate} />}
       {editDept && <DepartmentModal department={editDept} onClose={() => setEditDept(null)} onSubmit={handleUpdate} />}
+      <ConfirmDialog
+        isOpen={!!deactivateTarget}
+        title="Deactivate department"
+        message={`Students and admins will no longer be able to select "${deactivateTarget?.name || 'this department'}" for new active records.`}
+        confirmLabel="Deactivate"
+        loading={deactivating}
+        onCancel={() => setDeactivateTarget(null)}
+        onConfirm={handleDeactivate}
+      />
     </div>
   );
 }
@@ -87,14 +118,28 @@ export default function AdminDepartmentsPage() {
 function DepartmentModal({ department, onClose, onSubmit }) {
   const [name, setName] = useState(department?.name || '');
   const [code, setCode] = useState(department?.code || '');
-  const handleSubmit = (e) => { e.preventDefault(); onSubmit({ name, code: code || undefined }); };
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSaving(true);
+    try {
+      await onSubmit({ name, code: code || undefined });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <Modal isOpen onClose={onClose} title={department ? 'Edit department' : 'Add department'}>
       <form onSubmit={handleSubmit} className="space-y-4">
+        <AdminNotice>{error}</AdminNotice>
         <Input label="Name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Computer Science" required />
         <Input label="Code (optional)" value={code} onChange={e => setCode(e.target.value)} placeholder="e.g. CS" />
-        <div className="flex justify-end gap-2 pt-4 border-t border-mist"><Button variant="ghost" type="button" onClick={onClose}>Cancel</Button><Button variant="primary" type="submit">{department ? 'Save' : 'Create'}</Button></div>
+        <div className="flex justify-end gap-2 pt-4 border-t border-mist"><Button variant="ghost" type="button" onClick={onClose} disabled={saving}>Cancel</Button><Button variant="primary" type="submit" loading={saving}>{department ? 'Save' : 'Create'}</Button></div>
       </form>
     </Modal>
   );

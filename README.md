@@ -62,9 +62,9 @@ npm run dev
 
 Visit `http://localhost:5173`.
 
-**Test accounts** (all password: `password123`):
-- `admin@faculty.edu.ng` — admin
-- `student@faculty.edu.ng` — student
+**Test accounts**:
+- `admin@gmail.com` / `Admin1234` — admin
+- `student@faculty.edu.ng` / `password123` — student
 
 Local data persists in `server/local-data.json` (gitignored). Delete the file to reset.
 

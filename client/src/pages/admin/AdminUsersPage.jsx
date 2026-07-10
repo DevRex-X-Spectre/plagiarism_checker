@@ -8,6 +8,8 @@ import Select from '../../components/ui/Select.jsx';
 import Modal from '../../components/ui/Modal.jsx';
 import SearchInput from '../../components/ui/SearchInput.jsx';
 import Pagination from '../../components/ui/Pagination.jsx';
+import AdminNav from '../../components/admin/AdminNav.jsx';
+import AdminNotice from '../../components/admin/AdminNotice.jsx';
 import { useDebounce } from '../../hooks/useDebounce.js';
 
 export default function AdminUsersPage() {
@@ -15,30 +17,28 @@ export default function AdminUsersPage() {
   const [pagination, setPagination] = useState({ total: 0, page: 1, totalPages: 0 });
   const [filters, setFilters] = useState({ search: '', role: '' });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [editModal, setEditModal] = useState(null);
   const debouncedSearch = useDebounce(filters.search, 350);
 
   const fetchUsers = (page = 1) => {
     setLoading(true);
+    setError('');
     const params = { page };
     if (filters.search) params.search = filters.search;
     if (filters.role) params.role = filters.role;
     adminService.users(params).then(r => {
       setUsers(r.data.users);
       setPagination({ total: r.data.total, page: r.data.page, totalPages: r.data.totalPages });
-    }).finally(() => setLoading(false));
+    }).catch(err => setError(err.message)).finally(() => setLoading(false));
   };
 
   useEffect(() => { fetchUsers(1); }, [filters.role, debouncedSearch]);
 
   const handleUpdate = async (updates) => {
-    try {
-      await adminService.updateUser(editModal.id, updates);
-      setEditModal(null);
-      fetchUsers(pagination.page);
-    } catch (err) {
-      alert(err.message);
-    }
+    await adminService.updateUser(editModal.id, updates);
+    setEditModal(null);
+    fetchUsers(pagination.page);
   };
 
   return (
@@ -48,6 +48,9 @@ export default function AdminUsersPage() {
           <Badge className="inline-flex items-center gap-1.5 mb-3"><Users className="w-3.5 h-3.5" /> Users</Badge>
           <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight">{pagination.total} users</h1>
         </div>
+
+        <AdminNav />
+        <AdminNotice>{error}</AdminNotice>
 
         <div className="flex gap-3 mb-6">
           <SearchInput value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} placeholder="Search..." className="flex-1" />
@@ -88,13 +91,28 @@ export default function AdminUsersPage() {
 function EditUserModal({ user, onClose, onUpdate }) {
   const [role, setRole] = useState(user.role);
   const [isActive, setIsActive] = useState(user.is_active);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setError('');
+    setSaving(true);
+    try {
+      await onUpdate({ role, isActive });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <Modal isOpen onClose={onClose} title={`Edit ${user.full_name}`}>
       <div className="space-y-4">
+        <AdminNotice>{error}</AdminNotice>
         <Select label="Role" value={role} onChange={e => setRole(e.target.value)} options={[{ value: 'student', label: 'Student' }, { value: 'admin', label: 'Admin' }]} />
         <Select label="Status" value={isActive.toString()} onChange={e => setIsActive(e.target.value === 'true')} options={[{ value: 'true', label: 'Active' }, { value: 'false', label: 'Inactive' }]} />
-        <div className="flex justify-end gap-2 pt-4 border-t border-mist"><Button variant="ghost" onClick={onClose}>Cancel</Button><Button variant="primary" onClick={() => onUpdate({ role, isActive })}>Save</Button></div>
+        <div className="flex justify-end gap-2 pt-4 border-t border-mist"><Button variant="ghost" onClick={onClose} disabled={saving}>Cancel</Button><Button variant="primary" onClick={handleSave} loading={saving}>Save</Button></div>
       </div>
     </Modal>
   );

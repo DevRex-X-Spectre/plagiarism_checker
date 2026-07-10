@@ -1,4 +1,4 @@
-export default function Badge({ children, variant = 'default', style = {} }) {
+export default function Badge({ children, variant = 'default', style = {}, className = '' }) {
   const variants = {
     default: {
       background: 'var(--color-pale-cyan)',
@@ -27,9 +27,10 @@ export default function Badge({ children, variant = 'default', style = {} }) {
   };
 
   return (
-    <span style={{
+    <span className={className} style={{
       display: 'inline-flex',
       alignItems: 'center',
+      gap: '6px',
       padding: '6px 12px',
       fontSize: '11px',
       fontFamily: 'var(--font-suisseintlmono)',

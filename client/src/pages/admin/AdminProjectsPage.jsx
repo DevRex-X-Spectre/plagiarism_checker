@@ -7,6 +7,9 @@ import Badge from '../../components/ui/Badge.jsx';
 import Button from '../../components/ui/Button.jsx';
 import SearchInput from '../../components/ui/SearchInput.jsx';
 import Pagination from '../../components/ui/Pagination.jsx';
+import AdminNav from '../../components/admin/AdminNav.jsx';
+import AdminNotice from '../../components/admin/AdminNotice.jsx';
+import ConfirmDialog from '../../components/admin/ConfirmDialog.jsx';
 import { useDebounce } from '../../hooks/useDebounce.js';
 
 export default function AdminProjectsPage() {
@@ -14,22 +17,35 @@ export default function AdminProjectsPage() {
   const [pagination, setPagination] = useState({ total: 0, page: 1, totalPages: 0 });
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const debouncedQuery = useDebounce(query, 350);
 
   const fetchProjects = (page = 1) => {
     setLoading(true);
+    setError('');
     adminService.projects({ page, limit: 20, q: debouncedQuery || undefined }).then(r => {
       setProjects(r.data.projects);
       setPagination({ total: r.data.total, page: r.data.page, totalPages: r.data.totalPages });
-    }).finally(() => setLoading(false));
+    }).catch(err => setError(err.message)).finally(() => setLoading(false));
   };
 
   useEffect(() => { fetchProjects(1); }, [debouncedQuery]);
 
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this project?')) return;
-    try { await adminService.deleteProject(id); fetchProjects(pagination.page); }
-    catch (err) { alert(err.message); }
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    setError('');
+    try {
+      await adminService.deleteProject(deleteTarget.id);
+      setDeleteTarget(null);
+      fetchProjects(pagination.page);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -37,8 +53,12 @@ export default function AdminProjectsPage() {
       <div className="container max-w-5xl">
         <div className="mb-8">
           <Badge className="inline-flex items-center gap-1.5 mb-3"><FileText className="w-3.5 h-3.5" /> Projects</Badge>
-          <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight">{pagination.total} projects</h1>
+          <h1 className="text-3xl lg:text-4xl font-light text-deep-ink tracking-tight">Project browser</h1>
+          <p className="mt-2 text-slate">{pagination.total} projects available to review, open, or remove.</p>
         </div>
+
+        <AdminNav />
+        <AdminNotice>{error}</AdminNotice>
 
         <div className="mb-6">
           <SearchInput value={query} onChange={e => setQuery(e.target.value)} placeholder="Search projects..." />
@@ -52,6 +72,7 @@ export default function AdminProjectsPage() {
               </tr></thead>
               <tbody>
                 {loading ? <tr><td colSpan={6} className="px-4 py-8 text-center text-slate">Loading...</td></tr> :
+                 projects.length === 0 ? <tr><td colSpan={6} className="px-4 py-8 text-center text-slate">No projects found</td></tr> :
                  projects.map(p => (
                   <tr key={p.id} className="border-b border-mist last:border-0 hover:bg-paper-white/30">
                     <td className="px-4 py-3 max-w-xs">
@@ -63,7 +84,7 @@ export default function AdminProjectsPage() {
                     <td className="px-4 py-3"><Badge variant="muted">{p.department_name}</Badge></td>
                     <td className="px-4 py-3"><span className="text-sm text-slate">{p.year}</span></td>
                     <td className="px-4 py-3"><span className={`text-xs ${p.is_deleted ? 'text-danger' : 'text-success'}`}>{p.is_deleted ? 'Deleted' : 'Active'}</span></td>
-                    <td className="px-4 py-3 text-right">{!p.is_deleted && <Button variant="ghost" size="sm" icon={Trash2} onClick={() => handleDelete(p.id)} className="text-danger">Delete</Button>}</td>
+                    <td className="px-4 py-3 text-right">{!p.is_deleted && <Button variant="ghost" size="sm" icon={Trash2} onClick={() => setDeleteTarget(p)} className="text-danger">Delete</Button>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -71,6 +92,15 @@ export default function AdminProjectsPage() {
           </div>
         </Card>
         <Pagination page={pagination.page} totalPages={pagination.totalPages} total={pagination.total} onPageChange={fetchProjects} />
+        <ConfirmDialog
+          isOpen={!!deleteTarget}
+          title="Delete project"
+          message={`This will remove "${deleteTarget?.title || 'this project'}" from the active archive. This action cannot be undone from the admin screen.`}
+          confirmLabel="Delete project"
+          loading={deleting}
+          onCancel={() => setDeleteTarget(null)}
+          onConfirm={handleDelete}
+        />
       </div>
     </div>
   );

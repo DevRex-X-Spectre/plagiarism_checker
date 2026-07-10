@@ -20,13 +20,13 @@ export default function ProjectDetailPage() {
   }, [id]);
 
   if (loading) return <div className="py-32 text-center"><div className="w-8 h-8 border-2 border-mist border-t-deep-indigo rounded-full animate-spin mx-auto" /></div>;
-  if (error) return <div className="py-32 text-center"><p className="text-slate mb-4">{error}</p><Link to="/similarity-check"><Button variant="ghost" icon={ArrowLeft}>Back to repository</Button></Link></div>;
+  if (error) return <div className="py-32 text-center"><p className="text-slate mb-4">{error}</p><Link to="/similarity-check"><Button variant="ghost" icon={ArrowLeft}>Back to search</Button></Link></div>;
 
   return (
     <div className="py-8 lg:py-12">
       <div className="container max-w-3xl">
-        <Link to="/browse" className="inline-flex items-center gap-1.5 text-sm text-slate hover:text-deep-indigo mb-8 group">
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to archive
+        <Link to="/similarity-check" className="inline-flex items-center gap-1.5 text-sm text-slate hover:text-deep-indigo mb-8 group">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to search
         </Link>
 
         <Card padding={32} className="animate-fade-up card-3d">
