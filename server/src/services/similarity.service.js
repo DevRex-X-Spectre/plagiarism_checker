@@ -1,4 +1,4 @@
-import { embedText } from './embedding.service.js';
+import { embedText, getEmbeddingProvider } from './embedding.service.js';
 import pool from '../config/database.js';
 import { SIMILARITY } from '../config/constants.js';
 
@@ -22,6 +22,7 @@ export async function findSimilarProjects(queryText, threshold = SIMILARITY.DEFA
   // Generate embedding for the query
   const queryEmbedding = await embedText(queryText);
   const useTitleEmbedding = mode === 'title';
+  const provider = getEmbeddingProvider();
 
   // Load all non-deleted project embeddings. Topic-only checks use topic
   // embeddings; checks with abstracts use full title+abstract embeddings.
@@ -37,11 +38,13 @@ export async function findSimilarProjects(queryText, threshold = SIMILARITY.DEFA
 
   const scored = (await Promise.all(result.rows
     .map(async row => {
-      const candidateEmbedding = useTitleEmbedding && row.title_embedding
+      const candidateEmbedding = provider === 'fallback'
+        ? await embedText(useTitleEmbedding ? row.title : `${row.title} ${row.abstract}`)
+        : useTitleEmbedding && row.title_embedding
         ? row.title_embedding
         : useTitleEmbedding
         ? await embedText(row.title)
-        : row.embedding;
+        : row.embedding || await embedText(`${row.title} ${row.abstract}`);
       const score = cosineSimilarity(queryEmbedding, candidateEmbedding);
       return {
         projectId: row.id,
@@ -50,6 +53,7 @@ export async function findSimilarProjects(queryText, threshold = SIMILARITY.DEFA
         departmentName: row.department_name,
         year: row.year,
         score: Math.round(score * 100) / 100, // percentage with 2 decimals
+        provider,
         level: score >= SIMILARITY.HIGH_FLAG
           ? 'high'
           : score >= SIMILARITY.MODERATE_FLAG

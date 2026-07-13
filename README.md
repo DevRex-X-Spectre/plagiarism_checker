@@ -5,7 +5,7 @@ A Progressive Web Application for Nigerian university faculties to store final y
 ## Features
 
 - **Smart Document Upload** — Upload DOCX/PDF, system extracts title, abstract, author, department, and year automatically
-- **Semantic Similarity Check** — Enter a project topic, compare it against all stored projects using Sentence-BERT embeddings and cosine similarity
+- **Semantic Similarity Check** — Enter a project topic, compare it against all stored projects using Sentence-BERT embeddings and cosine similarity, with a local fallback engine when remote model hosting is unavailable
 - **Project Repository** — Browse, search, and filter all submitted projects
 - **Admin Console** — Manage users, departments, projects, and view similarity check logs
 - **PWA** — Installable, works offline for browsing cached projects
@@ -18,7 +18,7 @@ A Progressive Web Application for Nigerian university faculties to store final y
 | Frontend | React 18 + Vite + React Router |
 | PWA | vite-plugin-pwa / Workbox |
 | Backend | Node.js + Express |
-| Embeddings | @huggingface/transformers (all-MiniLM-L6-v2, ONNX) |
+| Embeddings | @huggingface/transformers (all-MiniLM-L6-v2, ONNX) with local hashed fallback |
 | Document parsing | mammoth (DOCX) + pdf-parse (PDF) |
 | Database | PostgreSQL |
 | Auth | JWT (httpOnly cookies) + bcrypt |
@@ -31,6 +31,7 @@ Single Node.js service running on Render Free Tier:
 - Express serves the REST API at `/api/*`
 - Express serves the React build as static assets in production
 - Sentence-BERT model runs in-process via `@huggingface/transformers` (no Python, no separate service)
+- If the ONNX model host is blocked, the backend automatically falls back to deterministic local hashed embeddings instead of returning 500 errors
 - Embeddings stored as JSONB arrays; cosine similarity computed in JavaScript
 
 ## Getting Started
@@ -80,6 +81,7 @@ cp server/.env.example server/.env
 #   - Remove USE_LOCAL_DB line (or set to false)
 #   - Set DATABASE_URL to your PostgreSQL connection string
 #   - Set JWT_SECRET to a long random string
+#   - Keep EMBEDDING_PROVIDER=auto unless you explicitly want to force fallback mode
 
 # Run migrations
 npm run migrate
@@ -114,6 +116,18 @@ npm run migrate
 ```
 
 The two modes use the same API surface — all models and controllers work identically.
+
+## Embedding Provider Modes
+
+The backend supports three embedding modes through `EMBEDDING_PROVIDER`:
+
+| Mode | Behavior |
+|---|---|
+| `auto` | Tries Sentence-BERT first and falls back to local hashed embeddings if the model host is unavailable. |
+| `transformers` | Requires Sentence-BERT to load successfully. Useful when you have stable model access and want strict semantic mode only. |
+| `fallback` | Uses the built-in local hashed embedding engine only. Best for locked-down or offline-friendly deployments. |
+
+For Render or other hosts that sometimes block ONNX downloads from Hugging Face, `auto` is the safest default and prevents similarity checks from failing with HTTP 500.
 
 ## Documentation
 

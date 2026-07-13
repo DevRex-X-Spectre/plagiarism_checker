@@ -59,9 +59,16 @@ RESEND_API_KEY=<optional-resend-api-key>
 EMAIL_FROM=noreply@yourdomain.com
 UPLOAD_DIR=uploads
 MAX_FILE_SIZE=20971520
+EMBEDDING_PROVIDER=auto
 ```
 
 Do not set `USE_LOCAL_DB` in production.
+
+`EMBEDDING_PROVIDER=auto` is the recommended Render setting. It tries the
+Sentence-BERT ONNX model first and automatically switches to the built-in local
+hashed embedding engine if the host cannot download model files from Hugging
+Face. This prevents `/api/similarity/check` and `/api/projects/confirm` from
+failing with HTTP 500 during cold starts or outbound network restrictions.
 
 Add this backend release command so tables are created on deploy:
 
@@ -144,3 +151,15 @@ https://your-backend-web-service.onrender.com/health
 ```
 
 Render free filesystems are ephemeral. Uploaded files in `server/uploads` can disappear after redeploys/restarts. Project metadata remains in PostgreSQL, but uploaded original documents need persistent storage for production-grade file retention.
+
+The health endpoint now reports the active embedding provider, for example:
+
+```json
+{ "status": "ok", "model": "ready", "provider": "transformers" }
+```
+
+or, when the model host is unavailable:
+
+```json
+{ "status": "ok", "model": "ready", "provider": "fallback" }
+```

@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import fs from 'fs';
 import path from 'path';
 import { errorHandler } from './middleware/error.middleware.js';
-import { warmUp, isModelReady } from './services/embedding.service.js';
+import { warmUp, isModelReady, getEmbeddingProvider } from './services/embedding.service.js';
 import { env } from './config/env.js';
 
 import authRoutes from './routes/auth.routes.js';
@@ -35,9 +35,9 @@ app.get('/health', async (req, res) => {
   if (!isModelReady()) {
     // Trigger warm-up without blocking the response
     warmUp().catch(err => console.error('Warm-up failed:', err.message));
-    return res.status(200).json({ status: 'warming_up', model: 'loading' });
+    return res.status(200).json({ status: 'warming_up', model: 'loading', provider: getEmbeddingProvider() });
   }
-  res.status(200).json({ status: 'ok', model: 'ready' });
+  res.status(200).json({ status: 'ok', model: 'ready', provider: getEmbeddingProvider() });
 });
 
 // API Routes
