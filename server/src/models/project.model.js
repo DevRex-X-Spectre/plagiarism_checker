@@ -1,4 +1,5 @@
 import pool from '../config/database.js';
+import { env } from '../config/env.js';
 
 export async function listProjects({ q, department, year, page = 1, limit = 20, includeDeleted = false }) {
   const conditions = [includeDeleted ? '1=1' : 'NOT p.is_deleted'];
@@ -80,11 +81,28 @@ export async function getProjectsByUser(userId) {
 export async function createProject({ title, abstract, authorName, departmentId, year, uploadedBy, titleEmbedding, embedding, fileName, originalFileName, mimeType, fileSize }) {
   const result = await pool.query(
     `INSERT INTO projects (title, abstract, author_name, department_id, year, uploaded_by, title_embedding, embedding, file_name, original_file_name, mime_type, file_size)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+     VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8::jsonb, $9, $10, $11, $12)
      RETURNING *`,
-    [title, abstract, authorName, departmentId, year, uploadedBy, titleEmbedding, embedding, fileName, originalFileName, mimeType || null, fileSize || null]
+    [
+      title,
+      abstract,
+      authorName,
+      departmentId,
+      year,
+      uploadedBy,
+      serializeEmbedding(titleEmbedding),
+      serializeEmbedding(embedding),
+      fileName,
+      originalFileName,
+      mimeType || null,
+      fileSize || null,
+    ]
   );
   return result.rows[0];
+}
+
+function serializeEmbedding(value) {
+  return env.useLocalDb ? value : JSON.stringify(value);
 }
 
 export async function softDeleteProject(id) {
