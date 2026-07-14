@@ -5,7 +5,6 @@ const items = [
   { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/admin/projects', label: 'Projects', icon: FileText },
   { to: '/admin/users', label: 'Users', icon: Users },
-  { to: '/admin/logs', label: 'Logs', icon: Activity },
   { to: '/admin/departments', label: 'Departments', icon: Building2 },
 ];
 

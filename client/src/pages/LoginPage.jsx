@@ -53,7 +53,6 @@ export default function LoginPage() {
                 <input type="checkbox" className="w-4 h-4 rounded border-mist text-deep-indigo" />
                 Remember me
               </label>
-              <Link to="/reset-password" className="text-deep-indigo hover:underline">Forgot password?</Link>
             </div>
 
             <Button type="submit" loading={loading} fullWidth size="lg" icon={ArrowRight} iconPosition="right">Sign in</Button>
