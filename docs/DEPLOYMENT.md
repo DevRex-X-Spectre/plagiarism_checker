@@ -124,7 +124,7 @@ Set backend `CLIENT_ORIGIN` to the exact frontend URL, including `https://`, so
 password-reset emails link back to the correct frontend. The API accepts CORS
 requests from every origin, including credentialed requests.
 
-If both services use Render `*.onrender.com` URLs, `COOKIE_SAME_SITE=lax` should work. If you later split the frontend and backend across different sites/domains and login cookies do not persist, set:
+When the frontend and backend are deployed as separate Render services, keep:
 
 ```env
 COOKIE_SAME_SITE=none
@@ -142,13 +142,20 @@ This local seeded login does not automatically exist in production PostgreSQL. T
 
 ## 7. Free Tier Notes
 
-Render free web services can sleep. The first request after sleep may be slow because the embedding model loads in memory.
+Render free web services can sleep. The first request after sleep may be slow
+because the Node process and embedding model need to start again. In the browser
+this can show up as a generic network error even when the code is correct.
 
 Point an uptime monitor at:
 
 ```text
 https://your-backend-web-service.onrender.com/health
 ```
+
+For a production app, the most reliable fix is to use a paid Render instance or
+an uptime monitor that calls `/health` every few minutes. The frontend also
+pings `/health` on startup, but that only helps after a user has opened the app;
+it cannot prevent Render from sleeping before the user arrives.
 
 Render free filesystems are ephemeral. Uploaded files in `server/uploads` can disappear after redeploys/restarts. Project metadata remains in PostgreSQL, but uploaded original documents need persistent storage for production-grade file retention.
 
