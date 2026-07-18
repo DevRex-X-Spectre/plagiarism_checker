@@ -76,7 +76,7 @@ export default function ResetPasswordPage() {
         <Card style={{ width: '100%', maxWidth: 440 }}>
           <h1 style={{ fontFamily: 'var(--font-suisseintl)', fontSize: 'var(--text-heading)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--spacing-8)' }}>Reset password</h1>
           <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-slate)', marginBottom: 'var(--spacing-32)' }}>Enter your new password</p>
-          {error && <div style={{ padding: 'var(--spacing-12)', background: '#fee2e2', borderRadius: 'var(--radius-lg)', color: '#991b1b', fontSize: 'var(--text-body-sm)', marginBottom: 'var(--spacing-24)' }}>{error}</div>}
+          {error && <div style={{ padding: 'var(--spacing-12)', background: '#eadfff', borderRadius: 'var(--radius-lg)', color: '#6d5fcd', fontSize: 'var(--text-body-sm)', marginBottom: 'var(--spacing-24)' }}>{error}</div>}
           <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-20)' }}>
             <Input label="New password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Min 8 characters" required />
             <Button type="submit" loading={loading} style={{ width: '100%' }}>Reset password</Button>
@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
       <Card style={{ width: '100%', maxWidth: 440 }}>
         <h1 style={{ fontFamily: 'var(--font-suisseintl)', fontSize: 'var(--text-heading)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--spacing-8)' }}>Forgot password</h1>
         <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-slate)', marginBottom: 'var(--spacing-32)' }}>Enter your email and we'll send you a reset link</p>
-        {error && <div style={{ padding: 'var(--spacing-12)', background: '#fee2e2', borderRadius: 'var(--radius-lg)', color: '#991b1b', fontSize: 'var(--text-body-sm)', marginBottom: 'var(--spacing-24)' }}>{error}</div>}
+        {error && <div style={{ padding: 'var(--spacing-12)', background: '#eadfff', borderRadius: 'var(--radius-lg)', color: '#6d5fcd', fontSize: 'var(--text-body-sm)', marginBottom: 'var(--spacing-24)' }}>{error}</div>}
         <form onSubmit={handleRequest} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-20)' }}>
           <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@university.edu.ng" required />
           <Button type="submit" loading={loading} style={{ width: '100%' }}>Send reset link</Button>

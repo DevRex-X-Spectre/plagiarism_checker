@@ -19,17 +19,17 @@ export default function Button({
 
   const variants = {
     primary:
-      'bg-deep-indigo text-white hover:bg-[#0d1540] hover:shadow-md hover:-translate-y-px',
+      'bg-deep-indigo text-white hover:bg-[#0b102e] hover:shadow-md hover:-translate-y-px',
     ghost:
       'bg-transparent text-carbon border border-mist hover:bg-paper-white hover:border-fog hover:text-deep-ink',
     secondary:
       'bg-paper-white text-carbon border border-mist hover:bg-card-white hover:shadow-xs',
     danger:
-      'bg-danger text-white hover:bg-[#b91c1c] hover:shadow-sm',
+      'bg-danger text-white hover:bg-[#8f3fbd] hover:shadow-sm',
     text:
-      'bg-transparent text-deep-indigo p-0 text-sm font-medium hover:text-[#0d1540] hover:underline rounded-sm',
+      'bg-transparent text-deep-indigo p-0 text-sm font-medium hover:text-[#0b102e] hover:underline rounded-sm',
     outline: 'bg-transparent text-deep-indigo border-2 border-deep-indigo hover:bg-deep-indigo hover:text-white',
-    success: 'bg-success text-white hover:bg-[#047857] hover:shadow-md',
+    success: 'bg-success text-white hover:bg-[#4d8fc8] hover:shadow-md',
   };
 
   const sizes = {

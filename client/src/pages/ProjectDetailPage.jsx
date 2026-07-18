@@ -53,7 +53,7 @@ export default function ProjectDetailPage() {
 
           <h1 className="text-3xl lg:text-4xl font-medium text-deep-ink tracking-tight mb-6 leading-tight">{project.title}</h1>
 
-          <div className="grid gap-3 sm:grid-cols-3 p-4 bg-white/65 rounded-2xl border border-white/70 mb-7 shadow-[0_14px_28px_-24px_rgba(17,26,74,0.35)]">
+          <div className="grid gap-3 sm:grid-cols-3 p-4 bg-white/65 rounded-2xl border border-white/70 mb-7 shadow-[0_14px_28px_-24px_rgba(33,33,86,0.38)]">
             <span className="flex items-center gap-2 text-sm text-slate"><User className="w-4 h-4 text-forest-teal" />{project.author_name}</span>
             <span className="flex items-center gap-2 text-sm text-slate"><Building className="w-4 h-4 text-deep-indigo" />{project.department_name}</span>
             <span className="flex items-center gap-2 text-sm text-slate"><Calendar className="w-4 h-4 text-warning" />{project.year}</span>

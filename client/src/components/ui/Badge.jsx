@@ -9,16 +9,16 @@ export default function Badge({ children, variant = 'default', style = {}, class
       color: '#ffffff',
     },
     warning: {
-      background: '#fef3c7',
-      color: '#92400e',
+      background: '#f1e8ff',
+      color: '#676792',
     },
     danger: {
-      background: '#fee2e2',
-      color: '#991b1b',
+      background: '#eadfff',
+      color: '#6d5fcd',
     },
     success: {
-      background: '#d1fae5',
-      color: '#065f46',
+      background: '#e2f7fb',
+      color: '#609ed9',
     },
     muted: {
       background: 'var(--color-paper-white)',
