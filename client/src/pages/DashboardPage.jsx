@@ -112,7 +112,7 @@ function ActionCard({ icon: Icon, title, href, delay }) {
     <Link to={href} className="block animate-fade-up" style={{ animationDelay: `${delay}ms` }}>
       <Card padding={20} hover className="group card-3d">
         <div className="flex items-center gap-4">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-deep-indigo/6 text-forest-teal shadow-[0_12px_22px_-18px_rgba(33,33,86,0.45)]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-pale-cyan text-forest-teal shadow-[0_12px_22px_-18px_rgba(0,0,0,0.68)]">
             <Icon className="w-5 h-5" />
           </div>
           <div className="flex-1">

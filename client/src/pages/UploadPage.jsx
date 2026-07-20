@@ -96,7 +96,7 @@ export default function UploadPage() {
           <Card padding={32} className="card-3d">
             <input ref={fileRef} type="file" accept=".docx,.pdf" onChange={e => handleFileChange(e.target.files[0])} className="hidden" />
             <div onClick={() => fileRef.current.click()} onDrop={handleDrop} onDragOver={e => { e.preventDefault(); setDragActive(true); }} onDragLeave={() => setDragActive(false)}
-              className={`border-2 border-dashed rounded-[24px] p-12 text-center cursor-pointer transition-all ${dragActive ? 'border-deep-indigo bg-pale-cyan/10 shadow-[0_18px_36px_-26px_rgba(33,33,86,0.42)]' : 'border-mist hover:border-deep-indigo hover:bg-white/60'}`}>
+              className={`border-2 border-dashed rounded-[24px] p-12 text-center cursor-pointer transition-all ${dragActive ? 'border-deep-indigo bg-pale-cyan shadow-[0_18px_36px_-26px_rgba(0,0,0,0.70)]' : 'border-mist hover:border-deep-indigo hover:bg-pale-cyan'}`}>
               {loading ? (
                 <div className="w-12 h-12 border-2 border-deep-indigo border-t-transparent rounded-full animate-spin mx-auto mb-4" />
               ) : (
@@ -124,7 +124,7 @@ export default function UploadPage() {
 
             <div className="space-y-4">
               <Input label="Title *" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Project title" required />
-              <div><label className="block text-sm font-medium mb-2 text-carbon">Abstract *</label><textarea value={form.abstract} onChange={e => setForm({ ...form, abstract: e.target.value })} rows={5} className="w-full px-4 py-3 border border-mist rounded-2xl bg-card-white outline-none transition-all duration-150 focus:border-deep-indigo focus:shadow-[0_0_0_4px_rgba(33,33,86,0.16)] resize-vertical" /></div>
+              <div><label className="block text-sm font-medium mb-2 text-carbon">Abstract *</label><textarea value={form.abstract} onChange={e => setForm({ ...form, abstract: e.target.value })} rows={5} className="w-full px-4 py-3 border border-mist rounded-2xl bg-card-white outline-none transition-all duration-150 focus:border-deep-indigo focus:shadow-[0_0_0_4px_rgba(201,100,66,0.22)] resize-vertical" /></div>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Input label="Author *" value={form.authorName} onChange={e => setForm({ ...form, authorName: e.target.value })} placeholder="Name" required />
                 <Select label="Department *" value={form.departmentId} onChange={e => setForm({ ...form, departmentId: e.target.value })} options={departments.map(d => ({ value: d.id, label: d.name }))} placeholder="Select department" required />
@@ -146,7 +146,7 @@ export default function UploadPage() {
 function Step({ n, label, active, done }) {
   return (
     <div className="flex items-center gap-2">
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${done ? 'bg-success text-white shadow-[0_12px_24px_-16px_rgba(96,158,217,0.48)]' : active ? 'bg-deep-indigo text-white scale-110 shadow-[0_14px_26px_-16px_rgba(33,33,86,0.58)]' : 'bg-mist text-slate'}`}>
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all ${done ? 'bg-success text-midnight-teal shadow-[0_12px_24px_-16px_rgba(0,0,0,0.62)]' : active ? 'bg-deep-indigo text-midnight-teal scale-110 shadow-[0_14px_26px_-16px_rgba(0,0,0,0.70)]' : 'bg-mist text-slate'}`}>
         {done ? <CheckCircle2 className="w-4 h-4" /> : n}
       </div>
       <span className={`text-sm hidden sm:block ${active ? 'font-medium text-deep-ink' : 'text-slate'}`}>{label}</span>

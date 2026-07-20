@@ -31,8 +31,8 @@ const Select = forwardRef(function Select({
             appearance-none
             ${Icon ? 'pl-10' : ''}
             ${error
-              ? 'border-danger hover:border-danger focus:border-danger focus:shadow-[0_0_0_3px_rgba(109,95,205,0.18)]'
-              : 'border-mist hover:border-fog focus:border-deep-indigo focus:shadow-[0_0_0_3px_rgba(33,33,86,0.16)]'
+              ? 'border-danger hover:border-danger focus:border-danger focus:shadow-[0_0_0_3px_rgba(211,107,93,0.22)]'
+              : 'border-mist hover:border-fog focus:border-deep-indigo focus:shadow-[0_0_0_3px_rgba(201,100,66,0.22)]'
             }
           `}
           {...props}

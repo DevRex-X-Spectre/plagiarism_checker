@@ -27,7 +27,7 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 520
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
       onClick={onClose}
-      style={{ background: 'rgba(11, 16, 46, 0.58)', backdropFilter: 'blur(8px)' }}
+      style={{ background: 'rgba(23, 20, 18, 0.72)', backdropFilter: 'blur(8px)' }}
     >
       <div
         className="relative w-full bg-card-white rounded-2xl shadow-xl animate-scale-in"

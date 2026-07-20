@@ -11,8 +11,8 @@ export default forwardRef(function Input(
 
   const inputBase =
     'w-full px-4 py-[10px] text-base font-sans text-deep-ink bg-card-white border rounded-lg outline-none transition-all duration-150 placeholder:text-fog';
-  const inputNormal = 'border-mist hover:border-fog focus:border-deep-indigo focus:shadow-[0_0_0_3px_rgba(33,33,86,0.16)]';
-  const inputError = 'border-danger hover:border-danger focus:border-danger focus:shadow-[0_0_0_3px_rgba(109,95,205,0.18)]';
+  const inputNormal = 'border-mist hover:border-fog focus:border-deep-indigo focus:shadow-[0_0_0_3px_rgba(201,100,66,0.22)]';
+  const inputError = 'border-danger hover:border-danger focus:border-danger focus:shadow-[0_0_0_3px_rgba(211,107,93,0.22)]';
 
   return (
     <div className={`flex flex-col gap-2 ${className}`}>

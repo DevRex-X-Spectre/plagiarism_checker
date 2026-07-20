@@ -65,7 +65,7 @@ export default function AdminDashboardPage() {
             <h2 className="text-base font-semibold text-deep-ink mb-4">Management</h2>
             <div className="grid gap-2">
               {navs.map(n => (
-                <Link key={n.href} to={n.href} className="group flex items-center gap-3 rounded-2xl border border-transparent p-3 transition-colors hover:border-mist hover:bg-white/70">
+                <Link key={n.href} to={n.href} className="group flex items-center gap-3 rounded-2xl border border-transparent p-3 transition-colors hover:border-deep-indigo/40 hover:bg-pale-cyan">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-deep-indigo/6 text-deep-indigo">
                     <n.icon className="h-5 w-5" />
                   </span>

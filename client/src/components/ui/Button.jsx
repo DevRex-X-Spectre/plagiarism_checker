@@ -19,17 +19,17 @@ export default function Button({
 
   const variants = {
     primary:
-      'bg-deep-indigo text-white hover:bg-[#0b102e] hover:shadow-md hover:-translate-y-px',
+      'bg-deep-indigo text-midnight-teal hover:bg-[#d97757] hover:shadow-md hover:-translate-y-px',
     ghost:
-      'bg-transparent text-carbon border border-mist hover:bg-paper-white hover:border-fog hover:text-deep-ink',
+      'bg-transparent text-carbon border border-mist hover:bg-pale-cyan hover:border-deep-indigo/60 hover:text-deep-ink',
     secondary:
       'bg-paper-white text-carbon border border-mist hover:bg-card-white hover:shadow-xs',
     danger:
-      'bg-danger text-white hover:bg-[#8f3fbd] hover:shadow-sm',
+      'bg-danger text-midnight-teal hover:bg-[#e07d6d] hover:shadow-sm',
     text:
-      'bg-transparent text-deep-indigo p-0 text-sm font-medium hover:text-[#0b102e] hover:underline rounded-sm',
-    outline: 'bg-transparent text-deep-indigo border-2 border-deep-indigo hover:bg-deep-indigo hover:text-white',
-    success: 'bg-success text-white hover:bg-[#4d8fc8] hover:shadow-md',
+      'bg-transparent text-deep-indigo p-0 text-sm font-medium hover:text-ember-orange hover:underline rounded-sm',
+    outline: 'bg-transparent text-deep-indigo border-2 border-deep-indigo hover:bg-deep-indigo hover:text-midnight-teal',
+    success: 'bg-success text-midnight-teal hover:bg-[#c9a172] hover:shadow-md',
   };
 
   const sizes = {

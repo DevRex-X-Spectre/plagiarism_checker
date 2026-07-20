@@ -12,7 +12,7 @@ export default function HomePage() {
       <div className="container max-w-6xl">
         <section className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
           <div className="relative py-6 text-center lg:py-10 lg:text-left">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-forest-teal shadow-[0_10px_24px_-20px_rgba(33,33,86,0.45)]">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-deep-indigo/30 bg-card-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-forest-teal shadow-[0_10px_24px_-20px_rgba(0,0,0,0.64)]">
               <Sparkles className="h-3.5 w-3.5" /> Faculty repository
             </div>
             <h1 className="mx-auto max-w-3xl text-4xl font-medium leading-[1.04] tracking-tight text-deep-ink sm:text-5xl lg:mx-0 lg:text-6xl">
@@ -34,17 +34,17 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="mt-8 flex flex-wrap justify-center gap-3 text-sm text-slate lg:justify-start">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-3 py-1.5 shadow-[0_10px_24px_-22px_rgba(33,33,86,0.45)]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-mist bg-card-white px-3 py-1.5 shadow-[0_10px_24px_-22px_rgba(0,0,0,0.64)]">
                 <ShieldCheck className="h-4 w-4 text-forest-teal" /> Structured review
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/70 px-3 py-1.5 shadow-[0_10px_24px_-22px_rgba(33,33,86,0.45)]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-mist bg-card-white px-3 py-1.5 shadow-[0_10px_24px_-22px_rgba(0,0,0,0.64)]">
                 <LibraryBig className="h-4 w-4 text-deep-indigo" /> Semantic repository
               </span>
             </div>
           </div>
 
           <Card padding={0} className="overflow-hidden card-3d">
-            <div className="border-b border-mist/80 bg-[linear-gradient(180deg,rgba(245,246,248,0.95),rgba(236,249,251,0.92))] px-6 py-5">
+            <div className="border-b border-mist/80 bg-paper-white px-6 py-5">
               <p className="text-sm font-semibold tracking-[0.08em] uppercase text-deep-ink">Quick actions</p>
             </div>
             <div className="grid gap-2 p-4">
@@ -60,8 +60,8 @@ export default function HomePage() {
 
 function Action({ to, state, icon: Icon, title, text }) {
   return (
-    <Link to={to} state={state} className="group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 transition-all duration-200 hover:border-white/70 hover:bg-white/70 hover:shadow-[0_16px_30px_-22px_rgba(33,33,86,0.42)]">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-deep-indigo/6 text-deep-indigo shadow-[0_12px_22px_-18px_rgba(33,33,86,0.42)]">
+    <Link to={to} state={state} className="group flex items-center gap-4 rounded-2xl border border-transparent px-4 py-4 transition-all duration-200 hover:border-deep-indigo/30 hover:bg-pale-cyan hover:shadow-[0_16px_30px_-22px_rgba(0,0,0,0.70)]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-pale-cyan text-deep-indigo shadow-[0_12px_22px_-18px_rgba(0,0,0,0.68)]">
         <Icon className="h-5 w-5" />
       </span>
       <span className="min-w-0 flex-1">

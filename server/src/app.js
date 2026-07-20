@@ -19,12 +19,19 @@ const app = express();
 // Trust proxy for secure cookies behind Render's load balancer
 app.set('trust proxy', 1);
 
-app.use(cors({
-  // Reflect any requesting origin so credentialed requests work from local
-  // development and separately deployed frontends without an origin allowlist.
+const corsOptions = {
+  // Open CORS: reflect every requesting origin. Browsers reject
+  // Access-Control-Allow-Origin: * when credentials/cookies are enabled.
   origin: true,
   credentials: true,
-}));
+  methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Disposition'],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

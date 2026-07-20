@@ -50,7 +50,7 @@ export default function SimilarityCheckPage() {
 
             <div>
               <label className="block text-sm font-medium text-carbon mb-2">Abstract or short description (optional)</label>
-              <textarea value={form.abstract} onChange={e => setForm({ ...form, abstract: e.target.value })} rows={3} placeholder="Add a concise description to refine the search." className="w-full px-4 py-3 text-base bg-card-white border border-mist rounded-2xl outline-none transition-all duration-150 focus:border-deep-indigo focus:shadow-[0_0_0_4px_rgba(33,33,86,0.16)] resize-vertical" />
+              <textarea value={form.abstract} onChange={e => setForm({ ...form, abstract: e.target.value })} rows={3} placeholder="Add a concise description to refine the search." className="w-full px-4 py-3 text-base bg-card-white border border-mist rounded-2xl outline-none transition-all duration-150 focus:border-deep-indigo focus:shadow-[0_0_0_4px_rgba(201,100,66,0.22)] resize-vertical" />
             </div>
 
             {error && <div className="flex items-center gap-2 p-3 bg-danger/5 border border-danger/20 rounded-2xl text-danger text-sm"><AlertCircle className="w-4 h-4" />{error}</div>}

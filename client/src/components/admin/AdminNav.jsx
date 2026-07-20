@@ -19,8 +19,8 @@ export default function AdminNav() {
           className={({ isActive }) =>
             `inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-colors sm:justify-start sm:rounded-full sm:px-4 ${
               isActive
-                ? 'border-deep-indigo bg-deep-indigo text-white'
-                : 'border-mist bg-white/70 text-carbon hover:border-fog hover:bg-white'
+                ? 'border-deep-indigo bg-deep-indigo text-midnight-teal'
+                : 'border-mist bg-card-white text-carbon hover:border-deep-indigo/60 hover:bg-pale-cyan'
             }`
           }
         >

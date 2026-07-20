@@ -4,26 +4,40 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
-  --surface-canvas: #cbd3f7;
-  --surface-panel: rgba(245, 246, 248, 0.80);
-  --surface-panel-strong: rgba(245, 246, 248, 0.95);
-  --surface-ink: #10142f;
-  --surface-border: rgba(33, 33, 86, 0.14);
-  --surface-border-strong: rgba(33, 33, 86, 0.22);
-  --surface-shadow: 0 18px 40px -18px rgba(33, 33, 86, 0.32), 0 2px 8px rgba(33, 33, 86, 0.08);
-  --surface-shadow-strong: 0 24px 56px -24px rgba(33, 33, 86, 0.40), 0 10px 22px -12px rgba(33, 33, 86, 0.18);
+  color-scheme: dark;
+  --surface-canvas: #171412;
+  --surface-panel: rgba(36, 32, 27, 0.88);
+  --surface-panel-strong: rgba(43, 37, 31, 0.96);
+  --surface-ink: #f6efe7;
+  --surface-border: rgba(201, 100, 66, 0.18);
+  --surface-border-strong: rgba(201, 100, 66, 0.30);
+  --surface-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.62), 0 2px 8px rgba(0, 0, 0, 0.28);
+  --surface-shadow-strong: 0 24px 56px -24px rgba(0, 0, 0, 0.72), 0 10px 22px -12px rgba(0, 0, 0, 0.42);
+  --color-paper-white: #1c1814;
+  --color-card-white: #24201b;
+  --color-deep-ink: #f6efe7;
+  --color-carbon: #e6d8c8;
+  --color-slate: #b9aa99;
+  --color-mist: #3b332c;
+  --color-fog: #847567;
+  --color-deep-indigo: #c96442;
+  --color-midnight-teal: #171412;
+  --color-forest-teal: #d97757;
+  --color-pale-cyan: #2b251f;
+  --color-danger: #d36b5d;
+  --color-danger-light: #3a231f;
+  --color-warning: #c9935e;
+  --color-warning-light: #38291d;
+  --color-success: #b99063;
+  --color-success-light: #35291f;
 }
 
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; scroll-behavior: smooth; }
 body {
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(96, 158, 217, 0.24), transparent 30%),
-    radial-gradient(circle at top right, rgba(109, 95, 205, 0.22), transparent 28%),
-    linear-gradient(180deg, #ecf9fb 0%, #d8e3f9 42%, var(--surface-canvas) 100%);
-  color: #10142f;
+  background: var(--surface-canvas);
+  color: #f6efe7;
   -webkit-font-smoothing: antialiased;
   min-height: 100dvh;
 }
@@ -42,21 +56,15 @@ body::after {
 
 body::before {
   background-image:
-    linear-gradient(rgba(33, 33, 86, 0.075) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(33, 33, 86, 0.075) 1px, transparent 1px);
+    linear-gradient(rgba(246, 239, 231, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(246, 239, 231, 0.055) 1px, transparent 1px);
   background-size: 28px 28px;
   mask-image: radial-gradient(circle at center, black 55%, transparent 100%);
-  opacity: 0.82;
+  opacity: 0.72;
 }
 
 body::after {
-  background:
-    radial-gradient(circle at 18% 30%, rgba(236, 249, 251, 0.34), transparent 18%),
-    radial-gradient(circle at 82% 16%, rgba(162, 162, 219, 0.22), transparent 16%),
-    linear-gradient(110deg, transparent 0%, transparent 38%, rgba(96, 158, 217, 0.18) 46%, rgba(109, 95, 205, 0.24) 50%, rgba(241, 124, 232, 0.13) 54%, transparent 62%);
-  opacity: 0.62;
-  transform: translate3d(0, 0, 0);
-  animation: matrix-drift 18s linear infinite;
+  display: none;
 }
 
 .container {
@@ -70,27 +78,27 @@ body::after {
   }
 }
 
-::selection { background: #cbd3f7; color: #212156; }
+::selection { background: #c96442; color: #171412; }
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { background: #abb1d9; border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: #676792; }
-:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(33, 33, 86, 0.20); }
+::-webkit-scrollbar-thumb { background: #3b332c; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #847567; }
+:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(201, 100, 66, 0.28); }
 
 .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-.bg-halftone { background-image: radial-gradient(circle, rgba(33, 33, 86, 0.08) 1px, transparent 1px); background-size: 20px 20px; }
-.skeleton { background: #cbd3f7; animation: pulse 1.4s ease-in-out infinite; }
-.loading-skeleton { background: rgba(203, 211, 247, 0.70); animation: pulse 1.4s ease-in-out infinite; }
+.bg-halftone { background-image: radial-gradient(circle, rgba(246, 239, 231, 0.07) 1px, transparent 1px); background-size: 20px 20px; }
+.skeleton { background: #3b332c; animation: pulse 1.4s ease-in-out infinite; }
+.loading-skeleton { background: rgba(59, 51, 44, 0.72); animation: pulse 1.4s ease-in-out infinite; }
 .panel-shell {
-  background: linear-gradient(180deg, rgba(245,246,248,0.94), rgba(236,249,251,0.78));
+  background: var(--surface-panel);
   border: 1px solid var(--surface-border);
   box-shadow: var(--surface-shadow);
   backdrop-filter: blur(18px);
 }
 .card-3d {
   box-shadow: var(--surface-shadow);
-  border: 1px solid rgba(33, 33, 86, 0.12);
+  border: 1px solid var(--surface-border);
 }
 .card-3d:hover {
   box-shadow: var(--surface-shadow-strong);
@@ -104,25 +112,12 @@ body::after {
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes bounce-in { 0% { opacity: 0; transform: scale(0.3); } 70% { transform: scale(1.05); } 100% { opacity: 1; transform: scale(1); } }
-@keyframes matrix-drift {
-  0% { background-position: 0 0, 0 0, -25vw 15vh; }
-  100% { background-position: 0 0, 0 0, 125vw 15vh; }
-}
-@keyframes matrix-snake {
-  0% { transform: translate3d(-10%, 8%, 0) rotate(0deg); opacity: 0.18; }
-  25% { opacity: 0.35; }
-  50% { transform: translate3d(35%, 22%, 0) rotate(6deg); opacity: 0.26; }
-  75% { opacity: 0.38; }
-  100% { transform: translate3d(115%, 34%, 0) rotate(11deg); opacity: 0.16; }
-}
-
 .animate-fade-up { animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-fade-in { animation: fade-in 0.3s ease-out both; }
 .animate-scale-in { animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-spin { animation: spin 0.7s linear infinite; }
 .animate-float { animation: float 3s ease-in-out infinite; }
 .animate-bounce-in { animation: bounce-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-.animate-matrix-snake { animation: matrix-snake 14s ease-in-out infinite; }
 
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }

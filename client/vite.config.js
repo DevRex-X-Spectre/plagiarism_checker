@@ -12,8 +12,8 @@ export default defineConfig({
         name: 'Project Repository',
         short_name: 'ProjRepo',
         description: 'Faculty Project Repository — Semantic Project Archive with Similarity Detection',
-        theme_color: '#111a4a',
-        background_color: '#f6f6f8',
+        theme_color: '#171412',
+        background_color: '#171412',
         display: 'standalone',
         start_url: '/',
         icons: [

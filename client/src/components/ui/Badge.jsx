@@ -6,19 +6,19 @@ export default function Badge({ children, variant = 'default', style = {}, class
     },
     primary: {
       background: 'var(--color-deep-indigo)',
-      color: '#ffffff',
+      color: 'var(--color-midnight-teal)',
     },
     warning: {
-      background: '#f1e8ff',
-      color: '#676792',
+      background: 'var(--color-warning-light)',
+      color: 'var(--color-warning)',
     },
     danger: {
-      background: '#eadfff',
-      color: '#6d5fcd',
+      background: 'var(--color-danger-light)',
+      color: 'var(--color-danger)',
     },
     success: {
-      background: '#e2f7fb',
-      color: '#609ed9',
+      background: 'var(--color-success-light)',
+      color: 'var(--color-success)',
     },
     muted: {
       background: 'var(--color-paper-white)',

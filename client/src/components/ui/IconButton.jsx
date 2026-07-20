@@ -15,7 +15,7 @@ export default function IconButton({
 
   const variants = {
     ghost: 'text-slate hover:text-deep-ink hover:bg-mist/50',
-    primary: 'text-white bg-deep-indigo hover:bg-[#0b102e]',
+    primary: 'text-midnight-teal bg-deep-indigo hover:bg-ember-orange',
     outline: 'text-deep-indigo border border-mist hover:bg-mist/30',
     danger: 'text-danger hover:bg-danger/10',
   };
