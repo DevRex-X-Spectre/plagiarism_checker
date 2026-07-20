@@ -1,13 +1,8 @@
-import api, { API_BASE_URL } from './api.js';
-
-function apiUrl(path) {
-  return `${API_BASE_URL.replace(/\/$/, '')}${path}`;
-}
+import api from './api.js';
 
 export const projectService = {
   list: (params) => api.get('/projects', { params }),
   get: (id) => api.get(`/projects/${id}`),
-  downloadUrl: (id) => apiUrl(`/projects/${id}/download`),
   getMine: () => api.get('/projects/my/list'),
   upload: (formData) => api.post('/projects/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },

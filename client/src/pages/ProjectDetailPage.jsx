@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { projectService } from '../services/project.service.js';
-import { ArrowLeft, Building, User, Calendar, Download } from 'lucide-react';
+import { ArrowLeft, Building, User, Calendar } from 'lucide-react';
 import Card from '../components/ui/Card.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -63,18 +63,6 @@ export default function ProjectDetailPage() {
             <h2 className="text-base font-semibold uppercase tracking-[0.16em] text-deep-ink mb-4">Abstract</h2>
             <p className="text-carbon leading-8 whitespace-pre-wrap text-[15px]">{project.abstract}</p>
           </div>
-
-          {project.file_name && (
-            <div className="mt-6 border-t border-mist/80 pt-6 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium text-deep-ink">Document available</p>
-                <p className="text-xs text-slate">Download the submitted file for offline review.</p>
-              </div>
-              <a href={projectService.downloadUrl(project.id)}>
-                <Button variant="ghost" icon={Download}>Download document</Button>
-              </a>
-            </div>
-          )}
         </Card>
       </div>
     </div>
