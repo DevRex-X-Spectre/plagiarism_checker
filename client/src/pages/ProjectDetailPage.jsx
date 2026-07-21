@@ -61,7 +61,7 @@ export default function ProjectDetailPage() {
 
           <div className="border-t border-mist/80 pt-6">
             <h2 className="text-base font-semibold uppercase tracking-[0.16em] text-deep-ink mb-4">Abstract</h2>
-            <p className="text-carbon leading-8 whitespace-pre-wrap text-[15px]">{project.abstract}</p>
+            <p className="text-base text-carbon leading-8 whitespace-pre-wrap">{project.abstract}</p>
           </div>
         </Card>
       </div>

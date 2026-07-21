@@ -93,7 +93,7 @@ export default function DashboardPage() {
                       <p className="text-sm font-semibold text-deep-ink line-clamp-2 mb-2">"{c.query_text}"</p>
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-xs text-slate">{new Date(c.created_at).toLocaleDateString()}</span>
-                        <Badge className="text-[10px]">{c.result_count} results</Badge>
+                        <Badge>{c.result_count} results</Badge>
                       </div>
                     </Card>
                   </Link>

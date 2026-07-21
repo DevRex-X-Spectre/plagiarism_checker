@@ -30,6 +30,12 @@
   --color-warning-light: #38291d;
   --color-success: #b99063;
   --color-success-light: #35291f;
+  --text-caption: 0.75rem;
+  --text-body-sm: 0.875rem;
+  --text-body: 0.9375rem;
+  --text-body-lg: 1.0625rem;
+  --text-heading: 1.5rem;
+  --text-display: 2.375rem;
 }
 
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }

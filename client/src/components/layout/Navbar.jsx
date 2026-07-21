@@ -59,7 +59,7 @@ export default function Navbar() {
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-deep-indigo text-midnight-teal shadow-[0_12px_24px_-12px_rgba(0,0,0,0.70)] ring-1 ring-deep-indigo/25">
               <BookOpen className="h-5 w-5" />
             </span>
-            <span className="truncate text-[15px] font-semibold tracking-[0.08em] text-deep-ink uppercase">Project Repository</span>
+            <span className="truncate text-base font-semibold tracking-[0.08em] text-deep-ink uppercase">Project Repository</span>
           </Link>
 
           <nav className="hidden items-center gap-2 lg:flex">

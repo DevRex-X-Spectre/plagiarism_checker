@@ -2,6 +2,18 @@
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
+    fontSize: {
+      xs: ['0.75rem', { lineHeight: '1rem' }],
+      sm: ['0.875rem', { lineHeight: '1.25rem' }],
+      base: ['0.9375rem', { lineHeight: '1.625rem' }],
+      lg: ['1.0625rem', { lineHeight: '1.75rem' }],
+      xl: ['1.25rem', { lineHeight: '1.875rem' }],
+      '2xl': ['1.5rem', { lineHeight: '2rem' }],
+      '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+      '4xl': ['2.375rem', { lineHeight: '2.75rem' }],
+      '5xl': ['3rem', { lineHeight: '1.05' }],
+      '6xl': ['3.75rem', { lineHeight: '1.02' }],
+    },
     extend: {
       colors: {
         'paper-white': '#1c1814',

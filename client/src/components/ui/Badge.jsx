@@ -32,7 +32,7 @@ export default function Badge({ children, variant = 'default', style = {}, class
       alignItems: 'center',
       gap: '6px',
       padding: '6px 12px',
-      fontSize: '11px',
+      fontSize: 'var(--text-caption)',
       fontFamily: 'var(--font-suisseintlmono)',
       fontWeight: 'var(--font-weight-regular)',
       letterSpacing: '0.5px',
